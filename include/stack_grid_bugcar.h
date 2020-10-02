@@ -20,19 +20,11 @@
 #include <cmath>
 #include <algorithm>
 #include <eigen3/Eigen/Dense>
+#include <opencv2/opencv.hpp>
 
-#define DEBUG_
-#ifdef DEBUG_
-    #define DEBUG_INFO(content) ROS_INFO_STREAM(content)
-    #define DEBUG_WARN(content) ROS_WARN_STREAM(content)
-    #define DEBUG_FATAL(content) ROS_FATAL_STREAM(content)
-#else
-    #define DEBUG_INFO(content)
-    #define DEBUG_WARN(content)
-    #define DEBUG_FATAL(content)
-#endif
- 
-namespace stack_grid{
+#include "simple_layer_obj.h"
+
+namespace stack_grid_bugcar{
  
     class StackGrid : public costmap_2d::Layer, public costmap_2d::Costmap2D{
         public:
@@ -53,12 +45,9 @@ namespace stack_grid{
         
         private:
             void reconfigureCB(costmap_2d::GenericPluginConfig &config, uint32_t level);
-            void initializeServiceClient();
 
-            void getGrid(const nav_msgs::OccupancyGrid::ConstPtr input_layer, nav_msgs::OccupancyGrid *layer, std::string *topic_name_);
-            bool isActive(const nav_msgs::OccupancyGrid &layer, const std::string &topic_name_);
             void publishCostmap(costmap_2d::Costmap2D cost_map_);    
-            uint8_t updateCharMap(const int8_t master_cell, uint8_t self_cell);   
+            uint8_t updateCharMap(const float img_cell, uint8_t self_cell);   
             uint8_t translateOccupancyToCost(int8_t occupancyValue);
 
             ros::NodeHandle *private_nh = NULL;
@@ -66,37 +55,27 @@ namespace stack_grid{
             ros::Publisher self_costmap_publisher;
             ros::Publisher costmap_origin_publisher;
 
-            std::string static_global_topic;
-            std::string static_local_topic;
-            std::string behaviour_regulator_topic;
-            std::string dynamic_obstacle_topic;
-            std::string obstacle_tracking_topic;
+            std::string static_topic;
+            std::string dynamic_topic;
+            std::string planning_ctrl_topic;
+            std::string tracking_topic;
             
             std::vector<const std::string*> subscribed_topics_;
 
-            ros::ServiceClient client_python;
-            ros::ServiceClient kill_python_srv;
-            stack_grid_bugcar::initStackService initPythonTool;
-            stack_grid_bugcar::killStackService killPythonTool;
-
             geometry_msgs::PoseStamped costmap_stamped_origin;
-            
 
-            std::string python_layer_topic;
-            ros::Subscriber python_layer_sub;
-            nav_msgs::OccupancyGrid python_layer;
-            std::vector<signed char> python_layer_buffer;
+            std::vector<boost::shared_ptr<SimpleLayerObj>> static_layers_handler;
+            
+            cv::Mat main_map_img;
+            int cvMatDim[2];
+
+            tf2_ros::Buffer tfBuffer;
+            tf2_ros::TransformListener tf_listener{tfBuffer};
 
             char *cost_lookup_table;
-            float cell_count[2];
-            double resolution;
-            double mark_x_, mark_y_;
             double max_delay_time;
             bool enable_debug;
-            std::string global_frame_;
-            std::string robot_base_frame_;
-
-            
+            std::string global_frame_;            
     };
 }
 #endif

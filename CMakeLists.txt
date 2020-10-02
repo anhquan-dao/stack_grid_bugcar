@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
+
 project(stack_grid_bugcar)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
@@ -24,7 +25,9 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 ## System dependencies are found with CMake's conventions
-#find_package(Boost REQUIRED COMPONENTS system)
+find_package(Boost REQUIRED COMPONENTS system)
+find_package(OpenCV REQUIRED COMPONENTS core imgproc highgui)
+
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -125,7 +128,6 @@ catkin_package(
   CATKIN_DEPENDS std_msgs geometry_msgs move_base_msgs nav_msgs sensor_msgs roscpp pluginlib costmap_2d tf tf2 tf2_geometry_msgs message_generation
 
 )
-
 ###########
 ## Build ##
 ###########
@@ -133,16 +135,17 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
- include
- ${catkin_INCLUDE_DIRS}
+  include
+  ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS}
 )
 
-## Declare a C++ library
 add_library(
   ${PROJECT_NAME} src/stack_grid_bugcar.cpp
 )
 add_dependencies(stack_grid_bugcar ${PROJECT_NAME}_generate_messages_cpp)
-target_link_libraries(stack_grid_bugcar ${catkin_LIBRARIES})
+target_link_libraries(stack_grid_bugcar ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${Boost_LIBRARIES})
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -223,5 +226,6 @@ target_link_libraries(stack_grid_bugcar ${catkin_LIBRARIES})
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
 
 

@@ -1,13 +1,13 @@
 #include "stack_grid_bugcar.h"
 #include <pluginlib/class_list_macros.h>
  
-PLUGINLIB_EXPORT_CLASS(stack_grid::StackGrid, costmap_2d::Layer)
+PLUGINLIB_EXPORT_CLASS(stack_grid_bugcar::StackGrid, costmap_2d::Layer)
  
 using costmap_2d::LETHAL_OBSTACLE;
 using costmap_2d::NO_INFORMATION;
 using costmap_2d::FREE_SPACE;
 
-namespace stack_grid{
+namespace stack_grid_bugcar{
  
 StackGrid::StackGrid() {}
 
@@ -30,49 +30,32 @@ void StackGrid::onInitialize(){
     default_value_ = costmap_2d::FREE_SPACE;
     global_frame_ = layered_costmap_->getGlobalFrameID();
 
-    self_costmap_publisher = nh.advertise<nav_msgs::OccupancyGrid>("/bugcar/" + name_ + "/costmap_", 1);
-    costmap_origin_publisher = private_nh->advertise<geometry_msgs::PoseStamped>("origin",5);
-
-    nh.getParam("static_global_topic", static_global_topic);
-    nh.getParam("static_local_topic", static_local_topic);
-    nh.getParam("behaviour_regulator_topic", behaviour_regulator_topic);
-    nh.getParam("dynamic_obstacle_topic", dynamic_obstacle_topic);
-    nh.getParam("obstacle_tracking_topic", obstacle_tracking_topic);
-
-    nh.param("max_delay_time", max_delay_time,1.0);
-
+    self_costmap_publisher = nh.advertise<nav_msgs::OccupancyGrid>(nh.getNamespace() + "/costmap", 1);
     costmap_stamped_origin.header.frame_id = global_frame_;
 
-    if(!static_global_topic.empty())
-        subscribed_topics_.push_back(&static_global_topic);
-    else
-        ROS_WARN_STREAM("No topic was provided for static_global_layer");
-    if(!static_local_topic.empty())
-        subscribed_topics_.push_back(&static_local_topic);
-    else
-        ROS_WARN_STREAM("No topic was provided for static_local_layer");
-    if(!behaviour_regulator_topic.empty())
-        subscribed_topics_.push_back(&behaviour_regulator_topic);
-    else
-        ROS_WARN_STREAM("No topic was provided for behaviour_regulator_layer");
-    if(!dynamic_obstacle_topic.empty())
-        subscribed_topics_.push_back(&dynamic_obstacle_topic); 
-    else
-        ROS_WARN_STREAM("No topic was provided for dynamic_obstacle_layer");
-    if(!obstacle_tracking_topic.empty())
-        subscribed_topics_.push_back(&obstacle_tracking_topic); 
-    else
-        ROS_WARN_STREAM("No topic was provided for obstaclle_tracking_layer");
+    std::string source_strings;
+    nh.getParam("static_sources",source_strings); 
+    ROS_INFO_STREAM("Subscribed to for static layer: " << source_strings.c_str());
+    
+    std::stringstream ss(source_strings);
+    std::string source;
+    while (ss >> source){
+        ros::NodeHandle source_node(nh, source);
 
-    std::string st;
-    for(std::vector<const std::string*>::iterator it = subscribed_topics_.begin(); it < subscribed_topics_.end(); ++it){
-        st = st + " " + **it;
+        std::string msg_type, topic;
+        bool enable_publish;
+        source_node.getParam("msg_type", msg_type);
+        source_node.getParam("topic", topic);
+        source_node.param("enable_publish", enable_publish, false);
+        static_layers_handler.push_back(boost::shared_ptr<SimpleLayerObj>(
+            new SimpleLayerObj(nh.getNamespace(), "static_source", 
+                               global_frame_, msg_type, topic)));
+        
+        if(enable_publish)
+            static_layers_handler.back()->enableVisualization();
+        else
+            static_layers_handler.back()->disableVisualization();
     }
-    if(st.empty()){
-        ROS_FATAL_STREAM("No input layers!!!");
-        ros::shutdown();
-    }
-    ROS_INFO_STREAM("\tSubscribed to: " << st);
 
     cost_lookup_table = new char [101];
     cost_lookup_table[0] = 0;
@@ -82,33 +65,9 @@ void StackGrid::onInitialize(){
     for(int i = 1; i < 99; i++){
         cost_lookup_table[i] = char(1 + (251 * (i - 1)) / 97);
     }
-
+    
 }
 
-void StackGrid::initializeServiceClient(){
-
-    client_python = private_nh->serviceClient<stack_grid_bugcar::initStackService>("/initStackService");
-    kill_python_srv = private_nh->serviceClient<stack_grid_bugcar::killStackService>("/endStackService");
-
-    initPythonTool.request.costmap_name.data = private_nh->getNamespace();
-    initPythonTool.request.layer_topic.clear();
-    initPythonTool.request.layer_topic.resize(subscribed_topics_.size());
-
-    for(int i = 0; i < subscribed_topics_.size(); ++i){
-        std::string topic = *(subscribed_topics_[i]);
-        initPythonTool.request.layer_topic[i].data = topic;
-    }
-
-    if(client_python.call(initPythonTool)){
-        if(initPythonTool.response.init_success.data){
-            python_layer_topic = initPythonTool.response.python_layer_topic.data;
-            python_layer_sub = private_nh->subscribe<nav_msgs::OccupancyGrid>(python_layer_topic,1
-                                                              ,boost::bind(&StackGrid::getGrid,this,_1,&python_layer,&python_layer_topic));
-            ROS_INFO_STREAM("Successfully init python tool");
-        }
-    }
-
-}
 void StackGrid::reconfigureCB(costmap_2d::GenericPluginConfig &config, uint32_t level){
     enabled_ = config.enabled;
 }
@@ -140,15 +99,26 @@ void StackGrid::updateBounds(double robot_x, double robot_y, double robot_yaw, d
     costmap_stamped_origin.pose.position.x = origin_x_;
     costmap_stamped_origin.pose.position.y = origin_y_;
     costmap_stamped_origin.header.stamp = ros::Time::now();
-    costmap_origin_publisher.publish(costmap_stamped_origin);
-
-    if(python_layer_buffer.size() != python_layer.data.size()){
-        python_layer_buffer.resize(python_layer.data.size());
+    
+    main_map_img.zeros(size_x_,size_y_, CV_32FC1);
+    cv::Mat overlay(main_map_img);
+    for(int i = 0; i < static_layers_handler.size(); ++i){
+        
+        ros::Time latest_time = static_layers_handler[i]->getLatestTime();
+        geometry_msgs::TransformStamped geo_transform;
+        try{
+            geo_transform = tfBuffer.lookupTransform(static_layers_handler[i]->get_frame_id(), global_frame_,
+                 (latest_time.toSec() > ros::Time(0).toSec() ? ros::Time(0) : latest_time));
+        }
+        catch (tf2::TransformException &ex){
+            ROS_WARN("%s",ex.what());
+        }
+        static_layers_handler[i]->update_main_costmap_origin(costmap_stamped_origin);
+        static_layers_handler[i]->transform_to_fit(geo_transform);
+        overlay = static_layers_handler[i]->getLayerIMG();
+        cv::max(main_map_img, overlay, main_map_img);
     }
 
-    if(isActive(python_layer, python_layer_topic)){       
-        python_layer_buffer = python_layer.data;
-    }
 
 }
 
@@ -156,69 +126,27 @@ void StackGrid::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, int m
                               int max_j){
 
     unsigned char *master_costmap_ = master_grid.getCharMap();
-
-    std::transform(python_layer_buffer.begin(), python_layer_buffer.end(), master_costmap_, master_costmap_,
+    
+    if(!main_map_img.isContinuous()){
+        main_map_img = main_map_img.clone();
+    }
+    std::transform(main_map_img.datastart, main_map_img.dataend, master_costmap_, master_costmap_,
     boost::bind(&StackGrid::updateCharMap,this,_1,_2));
-
+    
 }
 
 void StackGrid::matchSize(){
     costmap_2d::Costmap2D* master = layered_costmap_->getCostmap();
     resizeMap(master->getSizeInCellsX(), master->getSizeInCellsY(), master->getResolution(),
               master->getOriginX(), master->getOriginY());
-    
-    private_nh->setParam("size_x", (int)size_x_);
-    private_nh->setParam("size_y", (int)size_y_);
-    private_nh->setParam("resolution", resolution_);
-    private_nh->setParam("frame_id", global_frame_);
-    private_nh->setParam("origin_x", (int)origin_x_);
-    private_nh->setParam("origin_y", (int)origin_y_);
-
-    initializeServiceClient();
-}
-
-void StackGrid::getGrid(const nav_msgs::OccupancyGrid::ConstPtr input_layer, nav_msgs::OccupancyGrid *layer,  std::string *topic_name_){
-
-    // Copy occupancy grid information into a copy layer for later processing
-    // Get upload time info
-    layer->info.map_load_time = input_layer->info.map_load_time;
-    layer->header.stamp = input_layer->header.stamp;
-
-    // Get size info
-    layer->info.width = input_layer->info.width;
-    layer->info.height = input_layer->info.height;
-    layer->info.resolution = input_layer->info.resolution;
-
-    // Get origin and frame_id
-    layer->info.origin = input_layer->info.origin;
-    layer->header.frame_id = input_layer->header.frame_id;
-
-    // Get occupancy data 
-    if(layer->data.size() != input_layer->data.size())
-        layer->data.reserve(input_layer->data.size());
-
-    layer->data = input_layer->data;
-
-}
-
-bool StackGrid::isActive(const nav_msgs::OccupancyGrid &layer, const std::string &topic_name_){
-    if(topic_name_.empty()){
-        return false;
+    for(int i = 0; i < static_layers_handler.size(); ++i){
+        static_layers_handler[i]->update_size(size_x_, size_y_);
     }
-    double dt = abs(ros::Time::now().toSec() - layer.info.map_load_time.toSec());
-    if(dt > max_delay_time){
-        ROS_FATAL_STREAM(topic_name_ << " took too long to load and will not be used... last update was " << dt << " seconds ago");
-        return false;
-    } 
-    else 
-        if(layer.data.capacity() == 0){
-            ROS_WARN_STREAM(topic_name_ << " is empty... will not use this topic");
-            return false;
-        }
-        else return true;
+    main_map_img = cv::Mat::zeros(size_y_, size_x_, CV_32FC1);
 }
 
-uint8_t StackGrid::updateCharMap(const int8_t self_cell, uint8_t master_cell){
+uint8_t StackGrid::updateCharMap(const float img_cell, uint8_t master_cell){
+    uint8_t self_cell = img_cell;
     uint8_t cost = translateOccupancyToCost(self_cell);
     if(master_cell == 255){
         return cost;
