@@ -47,7 +47,8 @@ namespace stack_grid_bugcar{
             void reconfigureCB(costmap_2d::GenericPluginConfig &config, uint32_t level);
 
             void publishCostmap(costmap_2d::Costmap2D cost_map_);    
-            uint8_t updateCharMap(const float img_cell, uint8_t self_cell);   
+            void processMap(int index);
+            uint8_t updateCharMap(const int8_t img_cell, uint8_t self_cell);   
             uint8_t translateOccupancyToCost(int8_t occupancyValue);
 
             ros::NodeHandle *private_nh = NULL;
@@ -66,15 +67,19 @@ namespace stack_grid_bugcar{
 
             std::vector<boost::shared_ptr<SimpleLayerObj>> static_layers_handler;
             
+            std::vector<boost::shared_ptr<boost::thread>> process_map;
+            std::vector<cv::Mat*> layer_mat;
+            std::vector<bool> process_check;
+            bool update = false;
+            
             cv::Mat main_map_img;
-            int cvMatDim[2];
 
             tf2_ros::Buffer tfBuffer;
             tf2_ros::TransformListener tf_listener{tfBuffer};
 
             char *cost_lookup_table;
             double max_delay_time;
-            bool enable_debug;
+            
             std::string global_frame_;            
     };
 }

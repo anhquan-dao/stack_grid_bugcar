@@ -2,25 +2,18 @@
 #define SIMPLE_LAYER_OBJ
 
 #include <ros/ros.h>
-#include <costmap_2d/layer.h>
-#include <costmap_2d/layered_costmap.h>
-#include <costmap_2d/GenericPluginConfig.h>
+
 #include <nav_msgs/OccupancyGrid.h>
-#include <geometry_msgs/Point.h>
-#include <geometry_msgs/PointStamped.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <std_msgs/String.h>
 #include <tf/transform_listener.h>
 #include <tf2_ros/transform_listener.h>
 
-#include <stack_grid_bugcar/initStackService.h>
-#include <stack_grid_bugcar/killStackService.h>
-
-
 #include <cmath>
 #include <algorithm>
 #include <eigen3/Eigen/Dense>
 #include <opencv2/opencv.hpp>
+#include <opencv2/core.hpp>
 
 namespace stack_grid_bugcar{
 
@@ -31,10 +24,10 @@ class SimpleLayerObj{
         }    
         SimpleLayerObj(std::string parent_node, std::string src_name, std::string global_frame, std::string msg_type, std::string topic);
         cv::Mat getLayerIMG(){
-            return data_img_fit;
+            return *data_img_fit;
         }
         std::string get_frame_id(){
-            return "base_link";
+            return layer_origin.header.frame_id;
         }
         void update_main_costmap_origin(geometry_msgs::PoseStamped costmap_origin_){
             costmap_origin.header = costmap_origin_.header;
@@ -43,9 +36,9 @@ class SimpleLayerObj{
         void update_size(int size_x, int size_y){
             costmap_dim.width = size_x;
             costmap_dim.height = size_y;
-            data_img_fit = cv::Mat::zeros(costmap_dim,CV_32FC1);
-            if(!data_img_fit.isContinuous()){
-                data_img_fit = data_img_fit.clone();
+            *data_img_fit = cv::Mat::zeros(costmap_dim,CV_32FC1);
+            if(!data_img_fit->isContinuous()){
+                *data_img_fit = data_img_fit->clone();
             }
         }
         void transform_to_fit(geometry_msgs::TransformStamped tf_3d_msg){
@@ -55,7 +48,7 @@ class SimpleLayerObj{
             }
             data_img = data_img_float;
 
-            T_layer.eye(cv::Size(4,4),CV_32FC1);
+            T_layer =cv::Mat::eye(cv::Size(4,4),CV_32FC1);
             float angle = atan2(layer_origin.pose.orientation.z, layer_origin.pose.orientation.w);
             T_layer.at<float>(0,0) = cos(angle*2);
             T_layer.at<float>(1,1) = T_layer.at<float>(0,0);
@@ -77,21 +70,26 @@ class SimpleLayerObj{
             T_layer = T_3d_mat * T_layer;
             
             cv::Mat T_costmap = cv::Mat::eye(cv::Size(4,4),CV_32FC1);
-            T_costmap.at<float>(0,0) = 1.0;
-            T_costmap.at<float>(1,1) = 1.0;
-            T_costmap = T_costmap.t();
             T_costmap.at<float>(0,3) = -costmap_origin.pose.position.x;
             T_costmap.at<float>(1,3) = -costmap_origin.pose.position.y;
             
-            cv::Mat tf_2d_mat = (T_costmap*T_layer)(cv::Range(0,2),cv::Range(0,3));
+            cv::Mat tf_2d_mat = (T_costmap*T_layer)(cv::Range(0,2),cv::Range(0,4));
             tf_2d_mat.at<float>(0,2) = tf_2d_mat.at<float>(0,3) / layer_resolution;
             tf_2d_mat.at<float>(1,2) = tf_2d_mat.at<float>(1,3) / layer_resolution;
             tf_2d_mat = tf_2d_mat(cv::Range(0,2),cv::Range(0,3));
             
-            cv::warpAffine(data_img_float,data_img_fit,tf_2d_mat,costmap_dim);
+            if(data_img.type() != CV_32FC1)
+                data_img.convertTo(data_img, CV_32FC1);
+            if(data_img_fit->type() != CV_32FC1)
+                data_img_fit->convertTo(*data_img_fit, CV_32FC1);
             
+            cv::warpAffine(data_img,*data_img_fit,tf_2d_mat,costmap_dim);
+
             if(visual)
                 visualize_layer();  
+        }
+        void link_mat(cv::Mat *extern_mat){
+            data_img_fit = extern_mat;
         }
         void enableVisualization(){
             visual = true;
@@ -116,7 +114,7 @@ class SimpleLayerObj{
             vis.info.origin.position.x = costmap_origin.pose.position.x;
             vis.info.origin.position.y = costmap_origin.pose.position.y;
 
-            vis.data.assign((float*)data_img_fit.datastart,(float*)data_img_fit.dataend);
+            vis.data.assign((float*)data_img_fit->datastart,(float*)data_img_fit->dataend);
             
             vis_publisher.publish(vis);
         }
@@ -131,7 +129,7 @@ class SimpleLayerObj{
         
         cv::Mat data_img;
         cv::Mat data_img_float;
-        cv::Mat data_img_fit;
+        cv::Mat *data_img_fit;
         std::vector<float> raw_data_buffer;
 
         double layer_resolution;
