@@ -54,7 +54,7 @@ void StackGrid::onInitialize(){
         process_map.push_back(boost::shared_ptr<boost::thread>(
             new boost::thread(boost::bind(&StackGrid::processMap, this, 
                               process_map.size() ))));
-        layer_mat.push_back(new cv::Mat);
+        layer_mat.push_back(boost::shared_ptr<cv::Mat>(new cv::Mat));
         process_check.push_back(false);
 
         static_layers_handler.back()->link_mat(layer_mat.back());
@@ -78,7 +78,7 @@ void StackGrid::onInitialize(){
 void StackGrid::processMap(int index){
     while(ros::ok()){
         if(update && !process_check[index]){
-            ROS_INFO_STREAM("called " << index);
+            
             ros::Time latest_time = static_layers_handler[index]->getLatestTime();
             geometry_msgs::TransformStamped geo_transform;
             try{
@@ -91,6 +91,7 @@ void StackGrid::processMap(int index){
             static_layers_handler[index]->update_main_costmap_origin(costmap_stamped_origin);
             static_layers_handler[index]->transform_to_fit(geo_transform);
             process_check[index] = true;
+            ROS_INFO_STREAM("called " << index);
         }
     }
 }
@@ -156,6 +157,7 @@ void StackGrid::updateBounds(double robot_x, double robot_y, double robot_yaw, d
         }
     }
     update = false;
+    ROS_INFO_STREAM("Done updating");
     for(int i =  0; i < layer_mat.size(); ++i){
         cv::max(main_map_img, *layer_mat[i], main_map_img);
     }
@@ -168,11 +170,13 @@ void StackGrid::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, int m
     
     if(!main_map_img.isContinuous()){
         main_map_img = main_map_img.clone();
+        ROS_INFO_STREAM("Make continuous");
     }
     //std::cout << main_map_img << std::endl;
     main_map_img.convertTo(main_map_img,CV_8SC1);
     std::transform(main_map_img.datastart, main_map_img.dataend, master_costmap_, master_costmap_,
     boost::bind(&StackGrid::updateCharMap,this,_1,_2));
+    ROS_INFO_STREAM("convert to std::vector");
     
 }
 

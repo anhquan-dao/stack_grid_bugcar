@@ -63,20 +63,22 @@ class SimpleLayerObj{
             T_3d_mat.at<float>(1,1) = T_3d_mat.at<float>(0,0);
             T_3d_mat.at<float>(1,0) = sin(angle*2);
             T_3d_mat.at<float>(0,1) = -T_3d_mat.at<float>(1,0);
-            T_3d_mat = T_3d_mat.t();
-            T_3d_mat.at<float>(0,3) = -tf_3d_msg.transform.translation.x;
-            T_3d_mat.at<float>(1,3) = -tf_3d_msg.transform.translation.y;
+            //T_3d_mat = T_3d_mat.t();
+            T_3d_mat.at<float>(0,3) = tf_3d_msg.transform.translation.x;
+            T_3d_mat.at<float>(1,3) = tf_3d_msg.transform.translation.y;
  
-            T_layer = T_3d_mat * T_layer;
+            T_layer = T_3d_mat.inv() * T_layer;
             
             cv::Mat T_costmap = cv::Mat::eye(cv::Size(4,4),CV_32FC1);
-            T_costmap.at<float>(0,3) = -costmap_origin.pose.position.x;
-            T_costmap.at<float>(1,3) = -costmap_origin.pose.position.y;
+            T_costmap.at<float>(0,3) = costmap_origin.pose.position.x;
+            T_costmap.at<float>(1,3) = costmap_origin.pose.position.y;
             
-            cv::Mat tf_2d_mat = (T_costmap*T_layer)(cv::Range(0,2),cv::Range(0,4));
+            cv::Mat tf_2d_mat = (T_costmap.inv()*T_layer)(cv::Range(0,2),cv::Range(0,4));
             tf_2d_mat.at<float>(0,2) = tf_2d_mat.at<float>(0,3) / layer_resolution;
             tf_2d_mat.at<float>(1,2) = tf_2d_mat.at<float>(1,3) / layer_resolution;
             tf_2d_mat = tf_2d_mat(cv::Range(0,2),cv::Range(0,3));
+
+            std::cout << tf_2d_mat << std::endl;
             
             if(data_img.type() != CV_32FC1)
                 data_img.convertTo(data_img, CV_32FC1);
@@ -88,7 +90,7 @@ class SimpleLayerObj{
             if(visual)
                 visualize_layer();  
         }
-        void link_mat(cv::Mat *extern_mat){
+        void link_mat(boost::shared_ptr<cv::Mat> extern_mat){
             data_img_fit = extern_mat;
         }
         void enableVisualization(){
@@ -129,7 +131,7 @@ class SimpleLayerObj{
         
         cv::Mat data_img;
         cv::Mat data_img_float;
-        cv::Mat *data_img_fit;
+        boost::shared_ptr<cv::Mat> data_img_fit;
         std::vector<float> raw_data_buffer;
 
         double layer_resolution;

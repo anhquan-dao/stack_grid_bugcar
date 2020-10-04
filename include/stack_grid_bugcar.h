@@ -68,7 +68,7 @@ namespace stack_grid_bugcar{
             std::vector<boost::shared_ptr<SimpleLayerObj>> static_layers_handler;
             
             std::vector<boost::shared_ptr<boost::thread>> process_map;
-            std::vector<cv::Mat*> layer_mat;
+            std::vector<boost::shared_ptr<cv::Mat>> layer_mat;
             std::vector<bool> process_check;
             bool update = false;
             
