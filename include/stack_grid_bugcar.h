@@ -73,12 +73,15 @@ namespace stack_grid_bugcar{
             bool update = false;
             
             cv::Mat main_map_img;
+            cv::Mat main_map_img_mask;
 
             tf2_ros::Buffer tfBuffer;
             tf2_ros::TransformListener tf_listener{tfBuffer};
 
             char *cost_lookup_table;
             double max_delay_time;
+            double inflation_rad_;
+            bool track_unknown_;
             
             std::string global_frame_;            
     };

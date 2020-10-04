@@ -27,14 +27,26 @@ void StackGrid::onInitialize(){
     private_nh = new ros::NodeHandle("/bugcar/" + name_);
 
     current_ = true;    
-    default_value_ = costmap_2d::FREE_SPACE;
+    
     global_frame_ = layered_costmap_->getGlobalFrameID();
 
     self_costmap_publisher = nh.advertise<nav_msgs::OccupancyGrid>(nh.getNamespace() + "/costmap", 1);
     costmap_stamped_origin.header.frame_id = global_frame_;
 
     std::string source_strings;
-    nh.getParam("static_sources",source_strings); 
+    nh.getParam("static_sources", source_strings); 
+    nh.getParam("inflation_radius", inflation_rad_);
+    nh.getParam("track_unknown", track_unknown_);
+
+    if(track_unknown_){
+        default_value_ = costmap_2d::NO_INFORMATION;
+        DEFAULT_OCCUPANCY_VALUE = -1;
+    }
+    else{
+        default_value_ = costmap_2d::FREE_SPACE;
+        DEFAULT_OCCUPANCY_VALUE = 0;
+    }
+
     ROS_INFO_STREAM("Subscribed to for static layer: " << source_strings.c_str());
     
     std::stringstream ss(source_strings);
@@ -93,17 +105,16 @@ void StackGrid::processMap(int index){
                 int err_code = static_layers_handler[index]->transform_to_fit(geo_transform);
                 switch(err_code){
                     case stack_grid_bugcar::EMPTY_LINK_MAT_ERR:
-                        ROS_INFO_STREAM("Haven't linked matrix to source " << index);
+                        ROS_INFO_STREAM("Haven't linked matrix to handler of " << static_layers_handler[index]->get_name());
                         static_layers_handler[index]->link_mat(layer_mat[index]);
                         continue;
                     case stack_grid_bugcar::EMPTY_BUFFER_ERR:
-                        ROS_INFO_STREAM("Input for source " << index << " is empty");
+                        ROS_INFO_STREAM("Input for " << static_layers_handler[index]->get_name() << " is empty, topic: " << static_layers_handler[index]->get_sub_topic());
                 }
                 break;
             }
 
             process_check[index] = true;
-            ROS_INFO_STREAM("called " << index);
         }
     }
 }
@@ -140,26 +151,7 @@ void StackGrid::updateBounds(double robot_x, double robot_y, double robot_yaw, d
     costmap_stamped_origin.pose.position.y = origin_y_;
     costmap_stamped_origin.header.stamp = ros::Time::now();
     
-    main_map_img = cv::Mat::zeros(size_x_,size_y_, CV_32FC1);
-    /*
-    cv::Mat overlay(size_x_,size_y_, CV_32FC1);
-    for(int i = 0; i < static_layers_handler.size(); ++i){
-        
-        ros::Time latest_time = static_layers_handler[i]->getLatestTime();
-        geometry_msgs::TransformStamped geo_transform;
-        try{
-            geo_transform = tfBuffer.lookupTransform(static_layers_handler[i]->get_frame_id(), global_frame_,
-                 (latest_time.toSec() > ros::Time(0).toSec() ? ros::Time(0) : latest_time));
-        }
-        catch (tf2::TransformException &ex){
-            ROS_WARN("%s",ex.what());
-        }
-        static_layers_handler[i]->update_main_costmap_origin(costmap_stamped_origin);
-        static_layers_handler[i]->transform_to_fit(geo_transform);
-        overlay = static_layers_handler[i]->getLayerIMG();
-        cv::max(main_map_img, overlay, main_map_img);
-    }
-    */
+    main_map_img = cv::Mat(size_x_,size_y_, CV_32FC1,DEFAULT_OCCUPANCY_VALUE);
 
     update = true;
     while(true){
@@ -169,10 +161,19 @@ void StackGrid::updateBounds(double robot_x, double robot_y, double robot_yaw, d
         }
     }
     update = false;
-    ROS_INFO_STREAM("Done updating");
     for(int i =  0; i < layer_mat.size(); ++i){
         cv::max(main_map_img, *layer_mat[i], main_map_img);
     }
+    
+    int dilate_radius_cells = layered_costmap_->getInscribedRadius()/resolution_;
+    cv::Mat element = cv::getStructuringElement(cv::MORPH_ELLIPSE, 
+                      cv::Size(dilate_radius_cells*2 + 1,dilate_radius_cells*2 + 1));
+    cv::dilate(main_map_img, main_map_img, element);
+
+    int inflation_rad_cells = inflation_rad_/resolution_;
+    cv::GaussianBlur(main_map_img, main_map_img, 
+                      cv::Size(inflation_rad_cells*2 + 1,inflation_rad_cells*2 + 1),0);
+    
 }
 
 void StackGrid::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i,
@@ -182,14 +183,11 @@ void StackGrid::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, int m
     
     if(!main_map_img.isContinuous()){
         main_map_img = main_map_img.clone();
-        ROS_INFO_STREAM("Make continuous");
     }
     //std::cout << main_map_img << std::endl;
     main_map_img.convertTo(main_map_img,CV_8SC1);
     std::transform(main_map_img.datastart, main_map_img.dataend, master_costmap_, master_costmap_,
-    boost::bind(&StackGrid::updateCharMap,this,_1,_2));
-    ROS_INFO_STREAM("convert to std::vector");
-    
+    boost::bind(&StackGrid::updateCharMap,this,_1,_2));    
 }
 
 void StackGrid::matchSize(){
@@ -204,7 +202,6 @@ void StackGrid::matchSize(){
 
 uint8_t StackGrid::updateCharMap(const int8_t img_cell, uint8_t master_cell){
     uint8_t cost = translateOccupancyToCost(img_cell);
-    //ROS_INFO_STREAM(cost << " : " << img_cell);
     if(master_cell == 255){
         return cost;
     }

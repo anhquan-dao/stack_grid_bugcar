@@ -22,6 +22,7 @@ namespace stack_grid_bugcar{
 
 const int EMPTY_BUFFER_ERR = 2;
 const int EMPTY_LINK_MAT_ERR = 5;
+int DEFAULT_OCCUPANCY_VALUE = 0;
 
 class SimpleLayerObj{
     public:
@@ -34,6 +35,12 @@ class SimpleLayerObj{
         }
         std::string get_frame_id(){
             return layer_origin.header.frame_id;
+        }
+        std::string get_name(){
+            return obj_name;
+        }
+        std::string get_sub_topic(){
+            return sub_topic;
         }
         void update_main_costmap_origin(geometry_msgs::PoseStamped costmap_origin_){
             costmap_origin.header = costmap_origin_.header;
@@ -49,10 +56,9 @@ class SimpleLayerObj{
         }
         int transform_to_fit(geometry_msgs::TransformStamped tf_3d_msg){
             if(data_img_float.rows == 0 || data_img_float.cols == 0){
-                ROS_INFO_STREAM("buffer size (0,0)");
                 return EMPTY_BUFFER_ERR;
             }
-            data_img = data_img_float;
+            data_img_float.copyTo(data_img);
 
             T_layer =cv::Mat::eye(cv::Size(4,4),CV_32FC1);
             float angle = atan2(layer_origin.pose.orientation.z, layer_origin.pose.orientation.w);
@@ -84,8 +90,6 @@ class SimpleLayerObj{
             tf_2d_mat.at<float>(1,2) = tf_2d_mat.at<float>(1,3) / layer_resolution;
             tf_2d_mat = tf_2d_mat(cv::Range(0,2),cv::Range(0,3));
 
-            std::cout << tf_2d_mat << std::endl;
-
             if(data_img_fit == NULL){
                 return EMPTY_LINK_MAT_ERR;
             }
@@ -103,10 +107,10 @@ class SimpleLayerObj{
             if(data_img_fit->type() != CV_32FC1)
                 data_img_fit->convertTo(*data_img_fit, CV_32FC1);
             
-            
-                
-            cv::warpAffine(data_img,*data_img_fit,tf_2d_mat,costmap_dim);
-
+            cv::warpAffine(data_img,*data_img_fit,tf_2d_mat,costmap_dim, 
+                           cv::INTER_LINEAR, cv::BORDER_CONSTANT, DEFAULT_OCCUPANCY_VALUE);
+                           
+            //TODO: create thread to  handle publish layer so not to interfere with the process
             if(visual)
                 visualize_layer();  
 
@@ -164,6 +168,8 @@ class SimpleLayerObj{
 
         cv::Mat T_layer = cv::Mat(cv::Size(4,4),CV_32FC1);
 
+        std::string obj_name;
+        std::string sub_topic;
         bool visual = false;
         
 };
@@ -174,7 +180,7 @@ template<> void SimpleLayerObj::callback<nav_msgs::OccupancyGrid>(const nav_msgs
     layer_origin.pose = input_data->info.origin; 
     layer_resolution = input_data->info.resolution;
 
-    data_img_float = cv::Mat(input_data->data).reshape(1,input_data->info.width);
+    data_img_float = cv::Mat(input_data->data).reshape(1,input_data->info.height);
     data_img_float.convertTo(data_img_float,CV_32FC1);
     if(!data_img_float.isContinuous()){
         data_img_float = data_img_float.clone();
@@ -190,13 +196,14 @@ template<> void SimpleLayerObj::callback<sensor_msgs::LaserScan>(const sensor_ms
     //to be implemented
 }
 SimpleLayerObj::SimpleLayerObj(std::string parent_node, std::string src_name, std::string global_frame, std::string msg_type, std::string topic){
-   
+    obj_name = src_name;
+    sub_topic = topic;
     if(msg_type == "OccupancyGrid"){
         ros::NodeHandle nh(parent_node + "/occupancy_grid_handler/" + src_name);
         vis_publisher = nh.advertise<nav_msgs::OccupancyGrid>(nh.getNamespace(),5);
         layer_sub = nh.subscribe<nav_msgs::OccupancyGrid>("/map/free_local_occupancy_grid",1,boost::bind(&SimpleLayerObj::callback<nav_msgs::OccupancyGrid>,this,_1)); 
     }
-    ROS_INFO_STREAM("Created simple " + msg_type + " handler of type stack_grid_bugcar::SimpleLayerObj for " + src_name + ": " + topic);
+    ROS_INFO_STREAM("Created simple " + msg_type + " handler of type stack_grid_bugcar::SimpleLayerObj for " + obj_name + ": " + topic);
     global_frame_ = global_frame;
 }
 
