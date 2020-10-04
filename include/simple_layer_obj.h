@@ -4,6 +4,9 @@
 #include <ros/ros.h>
 
 #include <nav_msgs/OccupancyGrid.h>
+#include <sensor_msgs/PointCloud.h>
+#include <sensor_msgs/PointCloud2.h>
+#include <sensor_msgs/LaserScan.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <std_msgs/String.h>
 #include <tf/transform_listener.h>
@@ -16,6 +19,9 @@
 #include <opencv2/core.hpp>
 
 namespace stack_grid_bugcar{
+
+const int EMPTY_BUFFER_ERR = 2;
+const int EMPTY_LINK_MAT_ERR = 5;
 
 class SimpleLayerObj{
     public:
@@ -41,10 +47,10 @@ class SimpleLayerObj{
                 *data_img_fit = data_img_fit->clone();
             }
         }
-        void transform_to_fit(geometry_msgs::TransformStamped tf_3d_msg){
+        int transform_to_fit(geometry_msgs::TransformStamped tf_3d_msg){
             if(data_img_float.rows == 0 || data_img_float.cols == 0){
                 ROS_INFO_STREAM("buffer size (0,0)");
-                return;
+                return EMPTY_BUFFER_ERR;
             }
             data_img = data_img_float;
 
@@ -79,16 +85,32 @@ class SimpleLayerObj{
             tf_2d_mat = tf_2d_mat(cv::Range(0,2),cv::Range(0,3));
 
             std::cout << tf_2d_mat << std::endl;
+
+            if(data_img_fit == NULL){
+                return EMPTY_LINK_MAT_ERR;
+            }
+            if(data_img_fit->empty()){
+                ROS_INFO_STREAM("data_img_fit is empty");
+                *data_img_fit = cv::Mat::zeros(costmap_dim,CV_32FC1);
+            }
+            if(data_img.empty()){
+                ROS_INFO_STREAM("data_img is empty");
+                data_img = cv::Mat::zeros(costmap_dim,CV_32FC1);
+            }
             
             if(data_img.type() != CV_32FC1)
                 data_img.convertTo(data_img, CV_32FC1);
             if(data_img_fit->type() != CV_32FC1)
                 data_img_fit->convertTo(*data_img_fit, CV_32FC1);
             
+            
+                
             cv::warpAffine(data_img,*data_img_fit,tf_2d_mat,costmap_dim);
 
             if(visual)
                 visualize_layer();  
+
+            return 1;
         }
         void link_mat(boost::shared_ptr<cv::Mat> extern_mat){
             data_img_fit = extern_mat;
@@ -158,7 +180,15 @@ template<> void SimpleLayerObj::callback<nav_msgs::OccupancyGrid>(const nav_msgs
         data_img_float = data_img_float.clone();
     }
 }
-
+template<> void SimpleLayerObj::callback<sensor_msgs::PointCloud>(const sensor_msgs::PointCloud::ConstPtr input_data){
+    //to be implemented
+}
+template<> void SimpleLayerObj::callback<sensor_msgs::PointCloud2>(const sensor_msgs::PointCloud2::ConstPtr input_data){
+    //to be implemented
+}
+template<> void SimpleLayerObj::callback<sensor_msgs::LaserScan>(const sensor_msgs::LaserScan::ConstPtr input_data){
+    //to be implemented
+}
 SimpleLayerObj::SimpleLayerObj(std::string parent_node, std::string src_name, std::string global_frame, std::string msg_type, std::string topic){
    
     if(msg_type == "OccupancyGrid"){

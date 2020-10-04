@@ -48,7 +48,7 @@ void StackGrid::onInitialize(){
         source_node.getParam("topic", topic);
         source_node.param("enable_publish", enable_publish, false);
         static_layers_handler.push_back(boost::shared_ptr<SimpleLayerObj>(
-            new SimpleLayerObj(nh.getNamespace(), "static_source", 
+            new SimpleLayerObj(nh.getNamespace(), source, 
                                global_frame_, msg_type, topic)));
         
         process_map.push_back(boost::shared_ptr<boost::thread>(
@@ -89,7 +89,19 @@ void StackGrid::processMap(int index){
                 ROS_WARN("%s",ex.what());
             }
             static_layers_handler[index]->update_main_costmap_origin(costmap_stamped_origin);
-            static_layers_handler[index]->transform_to_fit(geo_transform);
+            while(true){
+                int err_code = static_layers_handler[index]->transform_to_fit(geo_transform);
+                switch(err_code){
+                    case stack_grid_bugcar::EMPTY_LINK_MAT_ERR:
+                        ROS_INFO_STREAM("Haven't linked matrix to source " << index);
+                        static_layers_handler[index]->link_mat(layer_mat[index]);
+                        continue;
+                    case stack_grid_bugcar::EMPTY_BUFFER_ERR:
+                        ROS_INFO_STREAM("Input for source " << index << " is empty");
+                }
+                break;
+            }
+
             process_check[index] = true;
             ROS_INFO_STREAM("called " << index);
         }
