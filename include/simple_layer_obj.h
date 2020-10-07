@@ -31,7 +31,7 @@ class SimpleLayerObj{
         }    
         SimpleLayerObj(std::string parent_node, std::string src_name, std::string global_frame, std::string msg_type, std::string topic);
         cv::Mat getLayerIMG(){
-            return *data_img_fit;
+            return data_img_fit;
         }
         std::string get_frame_id(){
             return layer_origin.header.frame_id;
@@ -49,10 +49,14 @@ class SimpleLayerObj{
         void update_size(int size_x, int size_y){
             costmap_dim.width = size_x;
             costmap_dim.height = size_y;
-            *data_img_fit = cv::Mat::zeros(costmap_dim,CV_32FC1);
-            if(!data_img_fit->isContinuous()){
-                *data_img_fit = data_img_fit->clone();
+            
+            data_img_fit = cv::Mat::zeros(costmap_dim,CV_32FC1);
+            if(!data_img_fit.isContinuous()){
+                data_img_fit = data_imf_fit.clone();
             }
+            
+            ROS_INFO_STREAM("yo");
+            
         }
         int transform_to_fit(geometry_msgs::TransformStamped tf_3d_msg){
             if(data_img_float.rows == 0 || data_img_float.cols == 0){
@@ -90,12 +94,9 @@ class SimpleLayerObj{
             tf_2d_mat.at<float>(1,2) = tf_2d_mat.at<float>(1,3) / layer_resolution;
             tf_2d_mat = tf_2d_mat(cv::Range(0,2),cv::Range(0,3));
 
-            if(data_img_fit == NULL){
-                return EMPTY_LINK_MAT_ERR;
-            }
-            if(data_img_fit->empty()){
+            if(data_img_fit.empty()){
                 ROS_INFO_STREAM("data_img_fit is empty");
-                *data_img_fit = cv::Mat::zeros(costmap_dim,CV_32FC1);
+                data_img_fit = cv::Mat::zeros(costmap_dim,CV_32FC1);
             }
             if(data_img.empty()){
                 ROS_INFO_STREAM("data_img is empty");
@@ -104,20 +105,21 @@ class SimpleLayerObj{
             
             if(data_img.type() != CV_32FC1)
                 data_img.convertTo(data_img, CV_32FC1);
-            if(data_img_fit->type() != CV_32FC1)
-                data_img_fit->convertTo(*data_img_fit, CV_32FC1);
+            if(data_img_fit.type() != CV_32FC1)
+                data_img_fit.convertTo(data_img_fit, CV_32FC1);
             
-            cv::warpAffine(data_img,*data_img_fit,tf_2d_mat,costmap_dim, 
+            cv::warpAffine(data_img,data_img_fit,tf_2d_mat,costmap_dim, 
                            cv::INTER_LINEAR, cv::BORDER_CONSTANT, DEFAULT_OCCUPANCY_VALUE);
                            
             //TODO: create thread to  handle publish layer so not to interfere with the process
             if(visual)
-                visualize_layer();  
+                //visualize_layer();  
 
             return 1;
         }
-        void link_mat(boost::shared_ptr<cv::Mat> extern_mat){
+        void link_mat(cv::Mat &extern_mat){
             data_img_fit = extern_mat;
+            
         }
         void enableVisualization(){
             visual = true;
@@ -142,7 +144,7 @@ class SimpleLayerObj{
             vis.info.origin.position.x = costmap_origin.pose.position.x;
             vis.info.origin.position.y = costmap_origin.pose.position.y;
 
-            vis.data.assign((float*)data_img_fit->datastart,(float*)data_img_fit->dataend);
+            vis.data.assign((float*)data_img_fit.datastart,(float*)data_img_fit.dataend);
             
             vis_publisher.publish(vis);
         }
@@ -157,7 +159,7 @@ class SimpleLayerObj{
         
         cv::Mat data_img;
         cv::Mat data_img_float;
-        boost::shared_ptr<cv::Mat> data_img_fit;
+        cv::Mat data_img_fit;
         std::vector<float> raw_data_buffer;
 
         double layer_resolution;

@@ -16,7 +16,7 @@ StackGrid::~StackGrid(){
         delete[] cost_lookup_table;
     }
     if(private_nh != NULL){
-        delete[] private_nh;
+        delete private_nh;
     }
     cost_lookup_table = NULL;
     private_nh = NULL;
@@ -66,17 +66,16 @@ void StackGrid::onInitialize(){
         process_map.push_back(boost::shared_ptr<boost::thread>(
             new boost::thread(boost::bind(&StackGrid::processMap, this, 
                               process_map.size() ))));
-        layer_mat.push_back(boost::shared_ptr<cv::Mat>(new cv::Mat));
+        layer_mat.push_back(new cv::Mat());
         process_check.push_back(false);
 
-        static_layers_handler.back()->link_mat(layer_mat.back());
         if(enable_publish)
             static_layers_handler.back()->enableVisualization();
         else
             static_layers_handler.back()->disableVisualization();
     }
 
-    cost_lookup_table = new char [101];
+    cost_lookup_table = new char [102];
     cost_lookup_table[0] = 0;
     cost_lookup_table[99] = 253;
     cost_lookup_table[100] = 254;
@@ -101,12 +100,12 @@ void StackGrid::processMap(int index){
                 ROS_WARN("%s",ex.what());
             }
             static_layers_handler[index]->update_main_costmap_origin(costmap_stamped_origin);
+
             while(true){
                 int err_code = static_layers_handler[index]->transform_to_fit(geo_transform);
                 switch(err_code){
                     case stack_grid_bugcar::EMPTY_LINK_MAT_ERR:
                         ROS_INFO_STREAM("Haven't linked matrix to handler of " << static_layers_handler[index]->get_name());
-                        static_layers_handler[index]->link_mat(layer_mat[index]);
                         continue;
                     case stack_grid_bugcar::EMPTY_BUFFER_ERR:
                         ROS_INFO_STREAM("Input for " << static_layers_handler[index]->get_name() << " is empty, topic: " << static_layers_handler[index]->get_sub_topic());
@@ -162,6 +161,7 @@ void StackGrid::updateBounds(double robot_x, double robot_y, double robot_yaw, d
     }
     update = false;
     for(int i =  0; i < layer_mat.size(); ++i){
+        layer_mat[i]->operator=(static_layers_handler[i]->getLayerIMG());
         cv::max(main_map_img, *layer_mat[i], main_map_img);
     }
     
