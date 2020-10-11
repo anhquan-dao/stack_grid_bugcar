@@ -51,6 +51,7 @@ void StackGrid::onInitialize(){
     
     std::stringstream ss(source_strings);
     std::string source;
+    int count = 0;
     while (ss >> source){
         ros::NodeHandle source_node(nh, source);
 
@@ -63,16 +64,20 @@ void StackGrid::onInitialize(){
             new SimpleLayerObj(nh.getNamespace(), source, 
                                global_frame_, msg_type, topic)));
         
+        
         process_map.push_back(boost::shared_ptr<boost::thread>(
-            new boost::thread(boost::bind(&StackGrid::processMap, this, 
-                              process_map.size() ))));
-        layer_mat.push_back(new cv::Mat());
-        process_check.push_back(false);
+            new boost::thread(boost::bind(&StackGrid::processMapCV, this, 
+                              count))));
+
+        layer_mat.push_back(boost::shared_ptr<cv::Mat>(new cv::Mat()));
+        process_check.push_back(true);
+        static_layers_handler.back()->link_mat(layer_mat.back());
 
         if(enable_publish)
             static_layers_handler.back()->enableVisualization();
         else
             static_layers_handler.back()->disableVisualization();
+        ++count;
     }
 
     cost_lookup_table = new char [102];
@@ -86,9 +91,14 @@ void StackGrid::onInitialize(){
     
 }
 
-void StackGrid::processMap(int index){
+void StackGrid::processMapCV(int index){
+    bool check_flag = false;
     while(ros::ok()){
-        if(update && !process_check[index]){
+        {
+            boost::lock_guard<boost::mutex> lg(data_mutex);
+            check_flag = process_check[index];
+        }
+        if(update.load() && !check_flag){
             
             ros::Time latest_time = static_layers_handler[index]->getLatestTime();
             geometry_msgs::TransformStamped geo_transform;
@@ -101,22 +111,15 @@ void StackGrid::processMap(int index){
             }
             static_layers_handler[index]->update_main_costmap_origin(costmap_stamped_origin);
 
-            while(true){
-                int err_code = static_layers_handler[index]->transform_to_fit(geo_transform);
-                switch(err_code){
-                    case stack_grid_bugcar::EMPTY_LINK_MAT_ERR:
-                        ROS_INFO_STREAM("Haven't linked matrix to handler of " << static_layers_handler[index]->get_name());
-                        continue;
-                    case stack_grid_bugcar::EMPTY_BUFFER_ERR:
-                        ROS_INFO_STREAM("Input for " << static_layers_handler[index]->get_name() << " is empty, topic: " << static_layers_handler[index]->get_sub_topic());
-                }
-                break;
-            }
+            int err_code = static_layers_handler[index]->transform_to_fit(geo_transform);
 
-            process_check[index] = true;
+            {
+                boost::lock_guard<boost::mutex> lg(data_mutex);
+                process_check[index] = true;
+            }        
         }
     }
-}
+}    
 
 void StackGrid::reconfigureCB(costmap_2d::GenericPluginConfig &config, uint32_t level){
     enabled_ = config.enabled;
@@ -134,15 +137,8 @@ void StackGrid::updateBounds(double robot_x, double robot_y, double robot_yaw, d
     *min_x = robot_x - dx;
     *min_y = robot_y - dy;
 
-    unsigned int mx;
-    unsigned int my;
-    double wx;
-    double wy;
-
     origin_x_ = layered_costmap_->getCostmap()->getOriginX();
     origin_y_ = layered_costmap_->getCostmap()->getOriginY();
-
-    double dt = ros::Time::now().toNSec();
 
     resetMaps();
 
@@ -150,35 +146,43 @@ void StackGrid::updateBounds(double robot_x, double robot_y, double robot_yaw, d
     costmap_stamped_origin.pose.position.y = origin_y_;
     costmap_stamped_origin.header.stamp = ros::Time::now();
     
-    main_map_img = cv::Mat(size_x_,size_y_, CV_32FC1,DEFAULT_OCCUPANCY_VALUE);
-
-    update = true;
+    main_map_img = cv::Mat(size_x_,size_y_, CV_32FC1,(float)DEFAULT_OCCUPANCY_VALUE);
+    
+    update.store(true);
     while(true){
-        if(std::all_of(process_check.begin(), process_check.end(), [](bool i){return i == true;})){
-            std::fill(process_check.begin(), process_check.end(), false);
+        boost::lock_guard<boost::mutex> lg(data_mutex);
+        if(std::all_of(process_check.begin(), process_check.end(), 
+                                                  [](bool i){return i;}))
             break;
-        }
+
     }
-    update = false;
-    for(int i =  0; i < layer_mat.size(); ++i){
-        layer_mat[i]->operator=(static_layers_handler[i]->getLayerIMG());
-        cv::max(main_map_img, *layer_mat[i], main_map_img);
+    {
+        boost::lock_guard<boost::mutex> lg(data_mutex);
+        std::fill(process_check.begin(), process_check.end(), false);
     }
     
+    update.store(false);
+
+    cv::Mat dummy;
+    for(int i =  0; i < static_layers_handler.size(); ++i){
+        cv::max(main_map_img, *layer_mat[i], main_map_img);
+    }
+    main_map_img.copyTo(main_map_img_mask);
     int dilate_radius_cells = layered_costmap_->getInscribedRadius()/resolution_;
     cv::Mat element = cv::getStructuringElement(cv::MORPH_ELLIPSE, 
                       cv::Size(dilate_radius_cells*2 + 1,dilate_radius_cells*2 + 1));
-    cv::dilate(main_map_img, main_map_img, element);
+    cv::dilate(main_map_img_mask, main_map_img_mask, element);
 
     int inflation_rad_cells = inflation_rad_/resolution_;
-    cv::GaussianBlur(main_map_img, main_map_img, 
+    cv::GaussianBlur(main_map_img_mask, main_map_img_mask, 
                       cv::Size(inflation_rad_cells*2 + 1,inflation_rad_cells*2 + 1),0);
+    cv::max(main_map_img, main_map_img_mask, main_map_img);
     
 }
 
 void StackGrid::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i,
                               int max_j){
-
+    
     unsigned char *master_costmap_ = master_grid.getCharMap();
     
     if(!main_map_img.isContinuous()){
@@ -187,7 +191,8 @@ void StackGrid::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, int m
     //std::cout << main_map_img << std::endl;
     main_map_img.convertTo(main_map_img,CV_8SC1);
     std::transform(main_map_img.datastart, main_map_img.dataend, master_costmap_, master_costmap_,
-    boost::bind(&StackGrid::updateCharMap,this,_1,_2));    
+    boost::bind(&StackGrid::updateCharMap,this,_1,_2)); 
+      
 }
 
 void StackGrid::matchSize(){

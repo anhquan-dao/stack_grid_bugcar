@@ -13,12 +13,9 @@
 #include <tf/transform_listener.h>
 #include <tf2_ros/transform_listener.h>
 
-#include <stack_grid_bugcar/initStackService.h>
-#include <stack_grid_bugcar/killStackService.h>
-
-
 #include <cmath>
 #include <algorithm>
+#include <memory>
 #include <eigen3/Eigen/Dense>
 #include <opencv2/opencv.hpp>
 
@@ -47,7 +44,8 @@ namespace stack_grid_bugcar{
             void reconfigureCB(costmap_2d::GenericPluginConfig &config, uint32_t level);
 
             void publishCostmap(costmap_2d::Costmap2D cost_map_);    
-            void processMap(int index);
+            void processMapCV(int index);
+
             uint8_t updateCharMap(const int8_t img_cell, uint8_t self_cell);   
             uint8_t translateOccupancyToCost(int8_t occupancyValue);
 
@@ -68,9 +66,13 @@ namespace stack_grid_bugcar{
             std::vector<boost::shared_ptr<SimpleLayerObj>> static_layers_handler;
             
             std::vector<boost::shared_ptr<boost::thread>> process_map;
-            std::vector<cv::Mat*> layer_mat;
+            std::vector<boost::shared_ptr<cv::Mat>> layer_mat;
             std::vector<bool> process_check;
-            bool update = false;
+
+            boost::atomic<bool> update{false};
+            boost::condition_variable cool_update;
+
+            boost::mutex data_mutex;
             
             cv::Mat main_map_img;
             cv::Mat main_map_img_mask;
@@ -82,6 +84,7 @@ namespace stack_grid_bugcar{
             double max_delay_time;
             double inflation_rad_;
             bool track_unknown_;
+            
             
             std::string global_frame_;            
     };

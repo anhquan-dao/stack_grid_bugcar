@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0.2)
 project(stack_grid_bugcar)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+add_compile_options(-std=c++14)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -142,7 +142,7 @@ include_directories(
 )
 
 add_library(
-  ${PROJECT_NAME} src/stack_grid_bugcar.cpp
+  ${PROJECT_NAME} src/stack_grid_bugcar.cpp src/simple_layer_obj.cpp
 )
 add_dependencies(stack_grid_bugcar ${PROJECT_NAME}_generate_messages_cpp)
 target_link_libraries(stack_grid_bugcar ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${Boost_LIBRARIES})
