@@ -9,7 +9,7 @@ namespace stack_grid_bugcar{
         global_frame_ = global_frame;
         if(msg_type == "OccupancyGrid"){
             vis_publisher = layer_handler.advertise<nav_msgs::OccupancyGrid>(parent_node + "/occupancy_grid_handler/" + src_name,5);
-            layer_sub = layer_handler.subscribe<nav_msgs::OccupancyGrid>(sub_topic,1,boost::bind(&SimpleLayerObj::callback<nav_msgs::OccupancyGrid>,this,_1)); 
+            layer_sub = layer_handler.subscribe<nav_msgs::OccupancyGrid>("/map/wtf",1,boost::bind(&SimpleLayerObj::callback<nav_msgs::OccupancyGrid>,this,_1)); 
         }
         ROS_INFO_STREAM("Created simple " + msg_type + " handler of type stack_grid_bugcar::SimpleLayerObj for " + obj_name + ": " + sub_topic);
         
@@ -44,6 +44,7 @@ namespace stack_grid_bugcar{
         costmap_dim.height = size_y;
         
         *data_img_fit.lock() = cv::Mat::zeros(costmap_dim,CV_32FC1);
+        prev_data_img_fit = cv::Mat::zeros(costmap_dim, CV_32FC1);
         if(!data_img_fit.lock()->isContinuous()){
             *data_img_fit.lock() = data_img_fit.lock()->clone();
             cv::patchNaNs(*data_img_fit.lock(), (float)DEFAULT_OCCUPANCY_VALUE);
@@ -60,7 +61,7 @@ namespace stack_grid_bugcar{
             ROS_WARN_STREAM("Input for " + obj_name + " is empty, topic: " + sub_topic);
             return EMPTY_MSG_ERR;
         }
-        if(abs(last_callback_time.toSec() - ros::Time::now().toSec()) > 0.5){
+        if(abs(last_callback_time.toSec() - ros::Time::now().toSec()) > 1){
             ROS_WARN_STREAM("Input for " + obj_name + " has not been updated for " <<
                      abs(last_callback_time.toSec() - ros::Time::now().toSec()) << ", topic: " + sub_topic);
             

@@ -70,12 +70,11 @@ namespace stack_grid_bugcar{
             std::vector<bool> process_check;
 
             boost::atomic<bool> update{false};
-            boost::condition_variable cool_update;
 
             boost::mutex data_mutex;
             
             cv::Mat main_map_img;
-            cv::Mat main_map_img_mask;
+            cv::Mat inflation_mask;
 
             tf2_ros::Buffer tfBuffer;
             tf2_ros::TransformListener tf_listener{tfBuffer};

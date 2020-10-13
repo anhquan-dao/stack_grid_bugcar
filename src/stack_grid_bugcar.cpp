@@ -36,7 +36,7 @@ void StackGrid::onInitialize(){
     std::string source_strings;
     nh.getParam("static_sources", source_strings); 
     nh.getParam("inflation_radius", inflation_rad_);
-    nh.getParam("track_unknown", track_unknown_);
+    nh.param("track_unknown", track_unknown_, true);
 
     if(track_unknown_){
         default_value_ = costmap_2d::NO_INFORMATION;
@@ -53,6 +53,8 @@ void StackGrid::onInitialize(){
     std::string source;
     int count = 0;
     while (ss >> source){
+        boost::lock_guard<boost::mutex> lg(data_mutex);
+
         ros::NodeHandle source_node(nh, source);
 
         std::string msg_type, topic;
@@ -163,20 +165,19 @@ void StackGrid::updateBounds(double robot_x, double robot_y, double robot_yaw, d
     
     update.store(false);
 
-    cv::Mat dummy;
     for(int i =  0; i < static_layers_handler.size(); ++i){
         cv::max(main_map_img, *layer_mat[i], main_map_img);
     }
-    main_map_img.copyTo(main_map_img_mask);
+    main_map_img.copyTo(inflation_mask);
     int dilate_radius_cells = layered_costmap_->getInscribedRadius()/resolution_;
-    cv::Mat element = cv::getStructuringElement(cv::MORPH_ELLIPSE, 
+    cv::Mat inflation_element = cv::getStructuringElement(cv::MORPH_ELLIPSE, 
                       cv::Size(dilate_radius_cells*2 + 1,dilate_radius_cells*2 + 1));
-    cv::dilate(main_map_img_mask, main_map_img_mask, element);
+    cv::dilate(inflation_mask, inflation_mask, inflation_element);
 
     int inflation_rad_cells = inflation_rad_/resolution_;
-    cv::GaussianBlur(main_map_img_mask, main_map_img_mask, 
+    cv::GaussianBlur(inflation_mask, inflation_mask, 
                       cv::Size(inflation_rad_cells*2 + 1,inflation_rad_cells*2 + 1),0);
-    cv::max(main_map_img, main_map_img_mask, main_map_img);
+    cv::max(main_map_img, inflation_mask, main_map_img);
     
 }
 
