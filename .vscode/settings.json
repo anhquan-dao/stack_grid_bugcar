@@ -60,6 +60,9 @@
         "random": "cpp",
         "set": "cpp",
         "*.ipp": "cpp",
-        "dense": "cpp"
+        "dense": "cpp",
+        "condition_variable": "cpp",
+        "future": "cpp",
+        "mutex": "cpp"
     }
 }

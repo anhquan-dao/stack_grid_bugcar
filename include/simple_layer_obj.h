@@ -13,13 +13,14 @@
 
 #include <cmath>
 #include <algorithm>
-#include <boost/thread.hpp>
+#include <thread>
+#include <mutex>
 #include <opencv2/opencv.hpp>
 
 namespace stack_grid_bugcar{
 
 static const int EMPTY_MSG_ERR = 2;
-static int DEFAULT_OCCUPANCY_VALUE = 0;
+static int DEFAULT_OCCUPANCY_VALUE = -1;
 static const int LATE_UPDATE_ERR = 3;
 
 class SimpleLayerObj{
@@ -36,7 +37,7 @@ class SimpleLayerObj{
         void update_size(int size_x, int size_y);
         int transform_to_fit(geometry_msgs::TransformStamped tf_3d_msg);
         
-        void link_mat(boost::shared_ptr<cv::Mat> extern_mat);
+        void link_mat(std::shared_ptr<cv::Mat> extern_mat);
 
         void enableVisualization();
         void disableVisualization();
@@ -54,7 +55,7 @@ class SimpleLayerObj{
         
         cv::Mat data_img;
         cv::Mat data_img_float;
-        boost::weak_ptr<cv::Mat> data_img_fit;
+        std::weak_ptr<cv::Mat> data_img_fit;
         cv::Mat prev_data_img_fit;
         std::vector<float> raw_data_buffer;
 
@@ -71,7 +72,7 @@ class SimpleLayerObj{
         std::string obj_name;
         std::string sub_topic;
         bool visual = false;
-        boost::mutex data_mutex;
+        std::mutex data_mutex;
         
 };
 template<> void SimpleLayerObj::callback<nav_msgs::OccupancyGrid>(const nav_msgs::OccupancyGrid::ConstPtr input_data);

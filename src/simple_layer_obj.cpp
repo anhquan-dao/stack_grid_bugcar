@@ -9,14 +9,14 @@ namespace stack_grid_bugcar{
         global_frame_ = global_frame;
         if(msg_type == "OccupancyGrid"){
             vis_publisher = layer_handler.advertise<nav_msgs::OccupancyGrid>(parent_node + "/occupancy_grid_handler/" + src_name,5);
-            layer_sub = layer_handler.subscribe<nav_msgs::OccupancyGrid>("/map/wtf",1,boost::bind(&SimpleLayerObj::callback<nav_msgs::OccupancyGrid>,this,_1)); 
+            layer_sub = layer_handler.subscribe<nav_msgs::OccupancyGrid>(sub_topic,1,boost::bind(&SimpleLayerObj::callback<nav_msgs::OccupancyGrid>,this,_1)); 
         }
         ROS_INFO_STREAM("Created simple " + msg_type + " handler of type stack_grid_bugcar::SimpleLayerObj for " + obj_name + ": " + sub_topic);
         
     }    
 
     cv::Mat SimpleLayerObj::getLayerIMG(){
-        boost::lock_guard<boost::mutex> lg(data_mutex);
+        std::lock_guard<std::mutex> lg(data_mutex);
         return *data_img_fit.lock();
     }
     std::string SimpleLayerObj::get_frame_id(){
@@ -28,7 +28,7 @@ namespace stack_grid_bugcar{
     std::string SimpleLayerObj::get_sub_topic(){
         return sub_topic;
     }
-    void SimpleLayerObj::link_mat(boost::shared_ptr<cv::Mat> extern_mat){
+    void SimpleLayerObj::link_mat(std::shared_ptr<cv::Mat> extern_mat){
         data_img_fit = extern_mat;
     }
     void SimpleLayerObj::update_main_costmap_origin(geometry_msgs::PoseStamped costmap_origin_){
@@ -52,7 +52,7 @@ namespace stack_grid_bugcar{
         
     }
     int SimpleLayerObj::transform_to_fit(geometry_msgs::TransformStamped tf_3d_msg){
-        boost::lock_guard<boost::mutex> lg(data_mutex);
+        std::lock_guard<std::mutex> lg(data_mutex);
         if(data_img_float.empty()){
             ROS_WARN_STREAM("Input for " + obj_name + " has not been published, topic: " + sub_topic);
             return EMPTY_MSG_ERR;
@@ -61,7 +61,7 @@ namespace stack_grid_bugcar{
             ROS_WARN_STREAM("Input for " + obj_name + " is empty, topic: " + sub_topic);
             return EMPTY_MSG_ERR;
         }
-        if(abs(last_callback_time.toSec() - ros::Time::now().toSec()) > 1){
+        if(abs(last_callback_time.toSec() - ros::Time::now().toSec()) > 2){
             ROS_WARN_STREAM("Input for " + obj_name + " has not been updated for " <<
                      abs(last_callback_time.toSec() - ros::Time::now().toSec()) << ", topic: " + sub_topic);
             
@@ -115,8 +115,7 @@ namespace stack_grid_bugcar{
         
         cv::patchNaNs(*data_img_fit.lock(), (float)DEFAULT_OCCUPANCY_VALUE);
         data_img_fit.lock()->copyTo(prev_data_img_fit);
-        
-
+          
         return 1;
     }
     
@@ -149,7 +148,7 @@ namespace stack_grid_bugcar{
     }
 
     template<> void SimpleLayerObj::callback<nav_msgs::OccupancyGrid>(const nav_msgs::OccupancyGrid::ConstPtr input_data){
-        boost::lock_guard<boost::mutex> lg(data_mutex);
+        std::lock_guard<std::mutex> lg(data_mutex);
         layer_origin.header = input_data->header;
         layer_origin.pose = input_data->info.origin; 
         layer_resolution = input_data->info.resolution;

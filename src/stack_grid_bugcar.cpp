@@ -53,7 +53,7 @@ void StackGrid::onInitialize(){
     std::string source;
     int count = 0;
     while (ss >> source){
-        boost::lock_guard<boost::mutex> lg(data_mutex);
+        std::lock_guard<std::mutex> lg(data_mutex);
 
         ros::NodeHandle source_node(nh, source);
 
@@ -62,16 +62,24 @@ void StackGrid::onInitialize(){
         source_node.getParam("msg_type", msg_type);
         source_node.getParam("topic", topic);
         source_node.param("enable_publish", enable_publish, false);
-        static_layers_handler.push_back(boost::shared_ptr<SimpleLayerObj>(
+        static_layers_handler.push_back(std::shared_ptr<SimpleLayerObj>(
             new SimpleLayerObj(nh.getNamespace(), source, 
-                               global_frame_, msg_type, topic)));
+                               global_frame_, msg_type, topic)
+        ));
+        async_map_process.push_back(std::shared_ptr<std::future<void>>(
+            new std::future<void>(std::async(std::launch::async,&StackGrid::processMapCV_callable, this, count))       
+        ));
+        async_process_check.push_back(std::shared_ptr<std::atomic<bool>>(
+            new std::atomic<bool>(false)
+        ));
         
         
-        process_map.push_back(boost::shared_ptr<boost::thread>(
-            new boost::thread(boost::bind(&StackGrid::processMapCV, this, 
-                              count))));
+        //process_map.push_back(boost::shared_ptr<boost::thread>(
+        //    new boost::thread(boost::bind(&StackGrid::processMapCV, this, 
+         //                     count))));
+                              
 
-        layer_mat.push_back(boost::shared_ptr<cv::Mat>(new cv::Mat()));
+        layer_mat.push_back(std::shared_ptr<cv::Mat>(new cv::Mat()));
         process_check.push_back(true);
         static_layers_handler.back()->link_mat(layer_mat.back());
 
@@ -91,37 +99,25 @@ void StackGrid::onInitialize(){
         cost_lookup_table[i] = char(1 + (251 * (i - 1)) / 97);
     }
     
-}
+}   
+void StackGrid::processMapCV_callable(int index){
 
-void StackGrid::processMapCV(int index){
-    bool check_flag = false;
-    while(ros::ok()){
-        {
-            boost::lock_guard<boost::mutex> lg(data_mutex);
-            check_flag = process_check[index];
-        }
-        if(update.load() && !check_flag){
-            
-            ros::Time latest_time = static_layers_handler[index]->getLatestTime();
-            geometry_msgs::TransformStamped geo_transform;
-            try{
-                geo_transform = tfBuffer.lookupTransform(static_layers_handler[index]->get_frame_id(), global_frame_,
-                        (latest_time.toSec() > ros::Time(0).toSec() ? ros::Time(0) : latest_time));
-            }
-            catch (tf2::TransformException &ex){
-                ROS_WARN("%s",ex.what());
-            }
-            static_layers_handler[index]->update_main_costmap_origin(costmap_stamped_origin);
-
-            int err_code = static_layers_handler[index]->transform_to_fit(geo_transform);
-
-            {
-                boost::lock_guard<boost::mutex> lg(data_mutex);
-                process_check[index] = true;
-            }        
-        }
+    ros::Time latest_time = static_layers_handler[index]->getLatestTime();
+    geometry_msgs::TransformStamped geo_transform;
+    try{
+        geo_transform = tfBuffer.lookupTransform(static_layers_handler[index]->get_frame_id(), global_frame_,
+                (latest_time.toSec() > ros::Time(0).toSec() ? ros::Time(0) : latest_time));
     }
-}    
+    catch (tf2::TransformException &ex){
+        ROS_WARN("%s",ex.what());
+    }
+    static_layers_handler[index]->update_main_costmap_origin(costmap_stamped_origin);
+
+    int err_code = static_layers_handler[index]->transform_to_fit(geo_transform);
+
+    process_check[index] = true;
+
+} 
 
 void StackGrid::reconfigureCB(costmap_2d::GenericPluginConfig &config, uint32_t level){
     enabled_ = config.enabled;
@@ -150,34 +146,39 @@ void StackGrid::updateBounds(double robot_x, double robot_y, double robot_yaw, d
     
     main_map_img = cv::Mat(size_x_,size_y_, CV_32FC1,(float)DEFAULT_OCCUPANCY_VALUE);
     
-    update.store(true);
+    for(int i =  0; i < static_layers_handler.size(); ++i){
+        std::future<void> process_(std::async(std::launch::async,&StackGrid::processMapCV_callable, this, i ));
+    }
     while(true){
-        boost::lock_guard<boost::mutex> lg(data_mutex);
+        std::lock_guard<std::mutex> lg(data_mutex);
         if(std::all_of(process_check.begin(), process_check.end(), 
-                                                  [](bool i){return i;}))
+                                                  [](bool i){return i;})){
+            std::fill(process_check.begin(), process_check.end(), false);
             break;
-
-    }
-    {
-        boost::lock_guard<boost::mutex> lg(data_mutex);
-        std::fill(process_check.begin(), process_check.end(), false);
-    }
+        }
+    }  
     
-    update.store(false);
-
     for(int i =  0; i < static_layers_handler.size(); ++i){
         cv::max(main_map_img, *layer_mat[i], main_map_img);
+        
     }
-    main_map_img.copyTo(inflation_mask);
+    
+    cv::threshold(main_map_img, obstacle_mask, 99, 100, CV_THRESH_TOZERO);
+    cv::threshold(main_map_img, unknown_mask, 0, 101, CV_THRESH_BINARY_INV);
+    std::cout << obstacle_mask << std::endl;
+
     int dilate_radius_cells = layered_costmap_->getInscribedRadius()/resolution_;
     cv::Mat inflation_element = cv::getStructuringElement(cv::MORPH_ELLIPSE, 
                       cv::Size(dilate_radius_cells*2 + 1,dilate_radius_cells*2 + 1));
-    cv::dilate(inflation_mask, inflation_mask, inflation_element);
+    cv::dilate(obstacle_mask, inflation_mask, inflation_element);
+    inflation_mask.setTo(99, inflation_mask == 100);
 
     int inflation_rad_cells = inflation_rad_/resolution_;
     cv::GaussianBlur(inflation_mask, inflation_mask, 
                       cv::Size(inflation_rad_cells*2 + 1,inflation_rad_cells*2 + 1),0);
     cv::max(main_map_img, inflation_mask, main_map_img);
+    cv::max(main_map_img, unknown_mask, main_map_img);
+    main_map_img.setTo(-1, main_map_img == 101);    
     
 }
 
