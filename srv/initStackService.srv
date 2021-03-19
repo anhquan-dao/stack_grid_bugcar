@@ -1,5 +1,0 @@
-std_msgs/String costmap_name
-std_msgs/String[] layer_topic
----
-std_msgs/Bool init_success
-std_msgs/String python_layer_topic

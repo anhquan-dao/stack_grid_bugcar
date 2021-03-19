@@ -1,0 +1,1461 @@
+==450== 
+==450== Process terminating with default action of signal 15 (SIGTERM)
+==450==    at 0x7234ED9: futex_reltimed_wait_cancelable (futex-internal.h:142)
+==450==    by 0x7234ED9: __pthread_cond_wait_common (pthread_cond_wait.c:533)
+==450==    by 0x7234ED9: pthread_cond_timedwait@@GLIBC_2.3.2 (pthread_cond_wait.c:667)
+==450==    by 0x54AE5C0: ros::internal::condition_variable_monotonic::do_wait_until(boost::unique_lock<boost::mutex>&, timespec const&) (in /opt/ros/melodic/lib/libroscpp.so)
+==450==    by 0x54AD83F: ros::CallbackQueue::callAvailable(ros::WallDuration) (in /opt/ros/melodic/lib/libroscpp.so)
+==450==    by 0x51675BA: tf2_ros::TransformListener::dedicatedListenerThread() (in /opt/ros/melodic/lib/libtf2_ros.so)
+==450==    by 0x856BBCC: ??? (in /usr/lib/x86_64-linux-gnu/libboost_thread.so.1.65.1)
+==450==    by 0x722E6DA: start_thread (pthread_create.c:463)
+==450==    by 0x690DA3E: clone (clone.S:95)
+==450== 
+==450== HEAP SUMMARY:
+==450==     in use at exit: 29,454,509 bytes in 2,877 blocks
+==450==   total heap usage: 278,855 allocs, 275,978 frees, 1,715,360,314 bytes allocated
+==450== 
+==450== 60 bytes in 1 blocks are possibly lost in loss record 400 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5EF221A: cv::Mat::create(int, int const*, int) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5ECEF2D: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4EDDB26: cv::MatExpr::operator cv::Mat() const (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EE6246: stack_grid_bugcar::StackGridNode::StackGridNode() (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x11AAC2: main (in /home/quan/ros_test_ws/devel/lib/stack_grid_bugcar/stack_grid_node)
+==450== 
+==450== 60 bytes in 1 blocks are possibly lost in loss record 401 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5EF221A: cv::Mat::create(int, int const*, int) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5ECEF2D: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4EDDB26: cv::MatExpr::operator cv::Mat() const (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EE62AC: stack_grid_bugcar::StackGridNode::StackGridNode() (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x11AAC2: main (in /home/quan/ros_test_ws/devel/lib/stack_grid_bugcar/stack_grid_node)
+==450== 
+==450== 60 bytes in 1 blocks are possibly lost in loss record 402 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5EF221A: cv::Mat::create(int, int const*, int) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4EC5EF6: cv::Mat::create(int, int, int) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EDD4E4: cv::Mat::Mat(cv::Size_<int>, int) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EE62F9: stack_grid_bugcar::StackGridNode::StackGridNode() (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x11AAC2: main (in /home/quan/ros_test_ws/devel/lib/stack_grid_bugcar/stack_grid_node)
+==450== 
+==450== 60 bytes in 1 blocks are possibly lost in loss record 403 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5EF221A: cv::Mat::create(int, int const*, int) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5ECEF2D: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4EDDB26: cv::MatExpr::operator cv::Mat() const (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EE6350: stack_grid_bugcar::StackGridNode::StackGridNode() (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x11AAC2: main (in /home/quan/ros_test_ws/devel/lib/stack_grid_bugcar/stack_grid_node)
+==450== 
+==450== 60 bytes in 1 blocks are possibly lost in loss record 404 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5EF221A: cv::Mat::create(int, int const*, int) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5ECEF2D: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4EDDB26: cv::MatExpr::operator cv::Mat() const (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EDB2CF: stack_grid_bugcar::SimpleLayerObj::transform_to_fit(geometry_msgs::TransformStamped_<std::allocator<void> >) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EE9E31: stack_grid_bugcar::StackGridNode::processMap(int) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EECC32: void std::__invoke_impl<void, void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int>(std::__invoke_memfun_deref, void (stack_grid_bugcar::StackGridNode::*&&)(int), stack_grid_bugcar::StackGridNode*&&, int&&) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EEC6C1: std::__invoke_result<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int>::type std::__invoke<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int>(void (stack_grid_bugcar::StackGridNode::*&&)(int), stack_grid_bugcar::StackGridNode*&&, int&&) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EEEDFA: decltype (__invoke((_S_declval<0ul>)(), (_S_declval<1ul>)(), (_S_declval<2ul>)())) std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >::_M_invoke<0ul, 1ul, 2ul>(std::_Index_tuple<0ul, 1ul, 2ul>) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EEED65: std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >::operator()() (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EEEAED: std::__future_base::_Task_setter<std::unique_ptr<std::__future_base::_Result<void>, std::__future_base::_Result_base::_Deleter>, std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >, void>::operator()() const (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450== 
+==450== 96 bytes in 1 blocks are definitely lost in loss record 632 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x68896B0: __libc_alloc_buffer_allocate (alloc_buffer_allocate.c:26)
+==450==    by 0x6933297: alloc_buffer_allocate (alloc_buffer.h:143)
+==450==    by 0x6933297: __resolv_conf_allocate (resolv_conf.c:410)
+==450==    by 0x6930273: __resolv_conf_load (res_init.c:587)
+==450==    by 0x69327A8: __resolv_conf_get_current (resolv_conf.c:162)
+==450==    by 0x6930FFC: __res_vinit (res_init.c:609)
+==450==    by 0x693219F: maybe_init (resolv_context.c:122)
+==450==    by 0x693219F: context_get (resolv_context.c:184)
+==450==    by 0x693219F: __resolv_context_get (resolv_context.c:195)
+==450==    by 0x68F1A6D: gaih_inet.constprop.7 (getaddrinfo.c:767)
+==450==    by 0x68F3DE3: getaddrinfo (getaddrinfo.c:2300)
+==450==    by 0x8790AD2: XmlRpc::XmlRpcSocket::connect(int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, int) (in /opt/ros/melodic/lib/libxmlrpcpp.so)
+==450==    by 0x8788FFD: XmlRpc::XmlRpcClient::doConnect() (in /opt/ros/melodic/lib/libxmlrpcpp.so)
+==450==    by 0x8788EE4: XmlRpc::XmlRpcClient::setupConnection() (in /opt/ros/melodic/lib/libxmlrpcpp.so)
+==450== 
+==450== 108 bytes in 1 blocks are possibly lost in loss record 643 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F507A4: cvRegisterType (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F50972: CvType::CvType(char const*, int (*)(void const*), void (*)(void**), void* (*)(CvFileStorage*, CvFileNode*), void (*)(CvFileStorage*, char const*, void const*, CvAttrList), void* (*)(void const*)) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A8295A: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 109 bytes in 1 blocks are possibly lost in loss record 644 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F507A4: cvRegisterType (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F50972: CvType::CvType(char const*, int (*)(void const*), void (*)(void**), void* (*)(CvFileStorage*, CvFileNode*), void (*)(CvFileStorage*, char const*, void const*, CvAttrList), void* (*)(void const*)) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF27BC: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 109 bytes in 1 blocks are possibly lost in loss record 645 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F507A4: cvRegisterType (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F50972: CvType::CvType(char const*, int (*)(void const*), void (*)(void**), void* (*)(CvFileStorage*, CvFileNode*), void (*)(CvFileStorage*, char const*, void const*, CvAttrList), void* (*)(void const*)) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF2854: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 110 bytes in 1 blocks are possibly lost in loss record 646 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F507A4: cvRegisterType (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F50972: CvType::CvType(char const*, int (*)(void const*), void (*)(void**), void* (*)(CvFileStorage*, CvFileNode*), void (*)(CvFileStorage*, char const*, void const*, CvAttrList), void* (*)(void const*)) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF28A0: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 112 bytes in 1 blocks are possibly lost in loss record 657 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F507A4: cvRegisterType (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F50972: CvType::CvType(char const*, int (*)(void const*), void (*)(void**), void* (*)(CvFileStorage*, CvFileNode*), void (*)(CvFileStorage*, char const*, void const*, CvAttrList), void* (*)(void const*)) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF271C: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 113 bytes in 1 blocks are possibly lost in loss record 658 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F507A4: cvRegisterType (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F50972: CvType::CvType(char const*, int (*)(void const*), void (*)(void**), void* (*)(CvFileStorage*, CvFileNode*), void (*)(CvFileStorage*, char const*, void const*, CvAttrList), void* (*)(void const*)) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF28EC: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 117 bytes in 1 blocks are possibly lost in loss record 659 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F507A4: cvRegisterType (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F50972: CvType::CvType(char const*, int (*)(void const*), void (*)(void**), void* (*)(CvFileStorage*, CvFileNode*), void (*)(CvFileStorage*, char const*, void const*, CvAttrList), void* (*)(void const*)) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF276C: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 117 bytes in 1 blocks are possibly lost in loss record 660 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F507A4: cvRegisterType (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F50972: CvType::CvType(char const*, int (*)(void const*), void (*)(void**), void* (*)(CvFileStorage*, CvFileNode*), void (*)(CvFileStorage*, char const*, void const*, CvAttrList), void* (*)(void const*)) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF2808: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 176 bytes in 2 blocks are possibly lost in loss record 726 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5EF221A: cv::Mat::create(int, int const*, int) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4EC5EF6: cv::Mat::create(int, int, int) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EDD4E4: cv::Mat::Mat(cv::Size_<int>, int) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4ED99A1: stack_grid_bugcar::SimpleLayerObj::SimpleLayerObj(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EE7B43: stack_grid_bugcar::StackGridNode::StackGridNode() (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x11AAC2: main (in /home/quan/ros_test_ws/devel/lib/stack_grid_bugcar/stack_grid_node)
+==450== 
+==450== 304 bytes in 1 blocks are possibly lost in loss record 783 of 977
+==450==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x40134F6: allocate_dtv (dl-tls.c:286)
+==450==    by 0x40134F6: _dl_allocate_tls (dl-tls.c:530)
+==450==    by 0x722F227: allocate_stack (allocatestack.c:627)
+==450==    by 0x722F227: pthread_create@@GLIBC_2.2.5 (pthread_create.c:644)
+==450==    by 0x856AB09: boost::thread::start_thread_noexcept() (in /usr/lib/x86_64-linux-gnu/libboost_thread.so.1.65.1)
+==450==    by 0x54945BE: ros::PollManager::start() (in /opt/ros/melodic/lib/libroscpp.so)
+==450==    by 0x54EE306: ros::start() (in /opt/ros/melodic/lib/libroscpp.so)
+==450==    by 0x54BCF9E: ros::NodeHandle::construct(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool) (in /opt/ros/melodic/lib/libroscpp.so)
+==450==    by 0x54BD316: ros::NodeHandle::NodeHandle(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::map<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > const&) (in /opt/ros/melodic/lib/libroscpp.so)
+==450==    by 0x5166B08: tf2_ros::TransformListener::TransformListener(tf2::BufferCore&, bool) (in /opt/ros/melodic/lib/libtf2_ros.so)
+==450==    by 0x4EBF7FB: stack_grid_bugcar::StackGrid::StackGrid() (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EE6044: stack_grid_bugcar::StackGridNode::StackGridNode() (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x11AAC2: main (in /home/quan/ros_test_ws/devel/lib/stack_grid_bugcar/stack_grid_node)
+==450== 
+==450== 304 bytes in 1 blocks are possibly lost in loss record 784 of 977
+==450==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x40134F6: allocate_dtv (dl-tls.c:286)
+==450==    by 0x40134F6: _dl_allocate_tls (dl-tls.c:530)
+==450==    by 0x722F227: allocate_stack (allocatestack.c:627)
+==450==    by 0x722F227: pthread_create@@GLIBC_2.2.5 (pthread_create.c:644)
+==450==    by 0x856AB09: boost::thread::start_thread_noexcept() (in /usr/lib/x86_64-linux-gnu/libboost_thread.so.1.65.1)
+==450==    by 0x547B92F: ros::XMLRPCManager::start() (in /opt/ros/melodic/lib/libroscpp.so)
+==450==    by 0x54EE313: ros::start() (in /opt/ros/melodic/lib/libroscpp.so)
+==450==    by 0x54BCF9E: ros::NodeHandle::construct(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool) (in /opt/ros/melodic/lib/libroscpp.so)
+==450==    by 0x54BD316: ros::NodeHandle::NodeHandle(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::map<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > const&) (in /opt/ros/melodic/lib/libroscpp.so)
+==450==    by 0x5166B08: tf2_ros::TransformListener::TransformListener(tf2::BufferCore&, bool) (in /opt/ros/melodic/lib/libtf2_ros.so)
+==450==    by 0x4EBF7FB: stack_grid_bugcar::StackGrid::StackGrid() (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EE6044: stack_grid_bugcar::StackGridNode::StackGridNode() (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x11AAC2: main (in /home/quan/ros_test_ws/devel/lib/stack_grid_bugcar/stack_grid_node)
+==450== 
+==450== 304 bytes in 1 blocks are possibly lost in loss record 785 of 977
+==450==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x40134F6: allocate_dtv (dl-tls.c:286)
+==450==    by 0x40134F6: _dl_allocate_tls (dl-tls.c:530)
+==450==    by 0x722F227: allocate_stack (allocatestack.c:627)
+==450==    by 0x722F227: pthread_create@@GLIBC_2.2.5 (pthread_create.c:644)
+==450==    by 0x856AB09: boost::thread::start_thread_noexcept() (in /usr/lib/x86_64-linux-gnu/libboost_thread.so.1.65.1)
+==450==    by 0x54E919D: ros::ROSOutAppender::ROSOutAppender() (in /opt/ros/melodic/lib/libroscpp.so)
+==450==    by 0x54EE444: ros::start() (in /opt/ros/melodic/lib/libroscpp.so)
+==450==    by 0x54BCF9E: ros::NodeHandle::construct(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool) (in /opt/ros/melodic/lib/libroscpp.so)
+==450==    by 0x54BD316: ros::NodeHandle::NodeHandle(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::map<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > const&) (in /opt/ros/melodic/lib/libroscpp.so)
+==450==    by 0x5166B08: tf2_ros::TransformListener::TransformListener(tf2::BufferCore&, bool) (in /opt/ros/melodic/lib/libtf2_ros.so)
+==450==    by 0x4EBF7FB: stack_grid_bugcar::StackGrid::StackGrid() (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EE6044: stack_grid_bugcar::StackGridNode::StackGridNode() (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x11AAC2: main (in /home/quan/ros_test_ws/devel/lib/stack_grid_bugcar/stack_grid_node)
+==450== 
+==450== 304 bytes in 1 blocks are possibly lost in loss record 786 of 977
+==450==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x40134F6: allocate_dtv (dl-tls.c:286)
+==450==    by 0x40134F6: _dl_allocate_tls (dl-tls.c:530)
+==450==    by 0x722F227: allocate_stack (allocatestack.c:627)
+==450==    by 0x722F227: pthread_create@@GLIBC_2.2.5 (pthread_create.c:644)
+==450==    by 0x856AB09: boost::thread::start_thread_noexcept() (in /usr/lib/x86_64-linux-gnu/libboost_thread.so.1.65.1)
+==450==    by 0x54F2051: boost::thread::thread<void (&)()>(void (&)()) (in /opt/ros/melodic/lib/libroscpp.so)
+==450==    by 0x54EE99A: ros::start() (in /opt/ros/melodic/lib/libroscpp.so)
+==450==    by 0x54BCF9E: ros::NodeHandle::construct(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool) (in /opt/ros/melodic/lib/libroscpp.so)
+==450==    by 0x54BD316: ros::NodeHandle::NodeHandle(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::map<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > const&) (in /opt/ros/melodic/lib/libroscpp.so)
+==450==    by 0x5166B08: tf2_ros::TransformListener::TransformListener(tf2::BufferCore&, bool) (in /opt/ros/melodic/lib/libtf2_ros.so)
+==450==    by 0x4EBF7FB: stack_grid_bugcar::StackGrid::StackGrid() (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EE6044: stack_grid_bugcar::StackGridNode::StackGridNode() (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x11AAC2: main (in /home/quan/ros_test_ws/devel/lib/stack_grid_bugcar/stack_grid_node)
+==450== 
+==450== 304 bytes in 1 blocks are possibly lost in loss record 787 of 977
+==450==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x40134F6: allocate_dtv (dl-tls.c:286)
+==450==    by 0x40134F6: _dl_allocate_tls (dl-tls.c:530)
+==450==    by 0x722F227: allocate_stack (allocatestack.c:627)
+==450==    by 0x722F227: pthread_create@@GLIBC_2.2.5 (pthread_create.c:644)
+==450==    by 0x856AB09: boost::thread::start_thread_noexcept() (in /usr/lib/x86_64-linux-gnu/libboost_thread.so.1.65.1)
+==450==    by 0x5164454: tf2_ros::TransformListener::initWithThread() (in /opt/ros/melodic/lib/libtf2_ros.so)
+==450==    by 0x5166B7A: tf2_ros::TransformListener::TransformListener(tf2::BufferCore&, bool) (in /opt/ros/melodic/lib/libtf2_ros.so)
+==450==    by 0x4EBF7FB: stack_grid_bugcar::StackGrid::StackGrid() (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EE6044: stack_grid_bugcar::StackGridNode::StackGridNode() (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x11AAC2: main (in /home/quan/ros_test_ws/devel/lib/stack_grid_bugcar/stack_grid_node)
+==450== 
+==450== 304 bytes in 1 blocks are possibly lost in loss record 788 of 977
+==450==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x40134F6: allocate_dtv (dl-tls.c:286)
+==450==    by 0x40134F6: _dl_allocate_tls (dl-tls.c:530)
+==450==    by 0x722F227: allocate_stack (allocatestack.c:627)
+==450==    by 0x722F227: pthread_create@@GLIBC_2.2.5 (pthread_create.c:644)
+==450==    by 0x856AB09: boost::thread::start_thread_noexcept() (in /usr/lib/x86_64-linux-gnu/libboost_thread.so.1.65.1)
+==450==    by 0x5164454: tf2_ros::TransformListener::initWithThread() (in /opt/ros/melodic/lib/libtf2_ros.so)
+==450==    by 0x5166B7A: tf2_ros::TransformListener::TransformListener(tf2::BufferCore&, bool) (in /opt/ros/melodic/lib/libtf2_ros.so)
+==450==    by 0x4EE60F3: stack_grid_bugcar::StackGridNode::StackGridNode() (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x11AAC2: main (in /home/quan/ros_test_ws/devel/lib/stack_grid_bugcar/stack_grid_node)
+==450== 
+==450== 608 bytes in 2 blocks are possibly lost in loss record 835 of 977
+==450==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x40134F6: allocate_dtv (dl-tls.c:286)
+==450==    by 0x40134F6: _dl_allocate_tls (dl-tls.c:530)
+==450==    by 0x722F227: allocate_stack (allocatestack.c:627)
+==450==    by 0x722F227: pthread_create@@GLIBC_2.2.5 (pthread_create.c:644)
+==450==    by 0xA0F93C9: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+==450==    by 0xA102034: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+==450==    by 0x5F3ECC1: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0xA105B45: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+==450==    by 0xA10278F: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+==450==    by 0x5F3FFFF: cv::parallel_for_(cv::Range const&, cv::ParallelLoopBody const&, double) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7BB285D: cv::hal::warpAffine(int, unsigned char const*, unsigned long, int, int, unsigned char*, unsigned long, int, int, double const*, int, int, double const*) (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x7BB3104: cv::warpAffine(cv::_InputArray const&, cv::_OutputArray const&, cv::_InputArray const&, cv::Size_<int>, int, int, cv::Scalar_<double> const&) (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4EEB49D: stack_grid_bugcar::StackGridNode::shiftToCurrentFrame(cv::Mat&, cv::Mat) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450== 
+==450== 608 bytes in 2 blocks are possibly lost in loss record 836 of 977
+==450==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x40134F6: allocate_dtv (dl-tls.c:286)
+==450==    by 0x40134F6: _dl_allocate_tls (dl-tls.c:530)
+==450==    by 0x722F227: allocate_stack (allocatestack.c:627)
+==450==    by 0x722F227: pthread_create@@GLIBC_2.2.5 (pthread_create.c:644)
+==450==    by 0x62D1014: std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) (in /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.28)
+==450==    by 0x4EEE6C6: std::thread::thread<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >, void>::_Async_state_impl(std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >&&)::{lambda()#1}>(std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >, void>::_Async_state_impl(std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >&&)::{lambda()#1}&&) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EEE382: std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >, void>::_Async_state_impl(std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >&&) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EEDFC5: void __gnu_cxx::new_allocator<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >, void> >::construct<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >, void>, std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> > >(std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >, void>*, std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >&&) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EEDD6B: void std::allocator_traits<std::allocator<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >, void> > >::construct<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >, void>, std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> > >(std::allocator<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >, void> >&, std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >, void>*, std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >&&) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EED985: std::_Sp_counted_ptr_inplace<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >, void>, std::allocator<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >, void> >, (__gnu_cxx::_Lock_policy)2>::_Sp_counted_ptr_inplace<std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> > >(std::allocator<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >, void> >, std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >&&) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EED55A: std::__shared_count<(__gnu_cxx::_Lock_policy)2>::__shared_count<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >, void>, std::allocator<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >, void> >, std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> > >(std::_Sp_make_shared_tag, std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >, void>*, std::allocator<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >, void> > const&, std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >&&) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EED393: std::__shared_ptr<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >, void>, (__gnu_cxx::_Lock_policy)2>::__shared_ptr<std::allocator<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >, void> >, std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> > >(std::_Sp_make_shared_tag, std::allocator<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >, void> > const&, std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >&&) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EED2C8: std::shared_ptr<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >, void> >::shared_ptr<std::allocator<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >, void> >, std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> > >(std::_Sp_make_shared_tag, std::allocator<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >, void> > const&, std::thread::_Invoker<std::tuple<void (stack_grid_bugcar::StackGridNode::*)(int), stack_grid_bugcar::StackGridNode*, int> >&&) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450== 
+==450== 1,024 bytes in 1 blocks are possibly lost in loss record 853 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF2D96: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 1,064 bytes in 1 blocks are possibly lost in loss record 867 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF2BD3: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 1,176 bytes in 1 blocks are possibly lost in loss record 869 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF2E63: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 1,248 bytes in 1 blocks are possibly lost in loss record 871 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF2DBF: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 1,260 bytes in 1 blocks are possibly lost in loss record 872 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A830D9: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 1,332 bytes in 1 blocks are possibly lost in loss record 873 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF2E8C: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 1,392 bytes in 1 blocks are possibly lost in loss record 875 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82FBA: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 1,520 bytes in 5 blocks are possibly lost in loss record 879 of 977
+==450==    at 0x4C31B25: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x40134F6: allocate_dtv (dl-tls.c:286)
+==450==    by 0x40134F6: _dl_allocate_tls (dl-tls.c:530)
+==450==    by 0x722F227: allocate_stack (allocatestack.c:627)
+==450==    by 0x722F227: pthread_create@@GLIBC_2.2.5 (pthread_create.c:644)
+==450==    by 0xA0F93C9: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+==450==    by 0xA0F94D8: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+==450==    by 0xA0F9768: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+==450==    by 0x722E6DA: start_thread (pthread_create.c:463)
+==450==    by 0x690DA3E: clone (clone.S:95)
+==450== 
+==450== 1,584 bytes in 1 blocks are possibly lost in loss record 880 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82AEC: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 1,700 bytes in 1 blocks are possibly lost in loss record 881 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF2DE8: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 1,772 bytes in 1 blocks are possibly lost in loss record 882 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82EC4: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 1,796 bytes in 1 blocks are possibly lost in loss record 884 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82E9B: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 1,952 bytes in 1 blocks are possibly lost in loss record 886 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF2EB5: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 2,072 bytes in 1 blocks are possibly lost in loss record 890 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82A93: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 2,360 bytes in 1 blocks are possibly lost in loss record 893 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF2CC9: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 2,384 bytes in 1 blocks are possibly lost in loss record 894 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82CAF: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 2,400 bytes in 1 blocks are possibly lost in loss record 895 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF2C25: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 2,476 bytes in 1 blocks are possibly lost in loss record 897 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF2BFC: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 2,484 bytes in 1 blocks are possibly lost in loss record 898 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF2EDE: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 2,528 bytes in 1 blocks are possibly lost in loss record 900 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF2CF2: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 2,616 bytes in 1 blocks are possibly lost in loss record 902 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82AC3: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 2,676 bytes in 1 blocks are possibly lost in loss record 903 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82B67: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 2,896 bytes in 1 blocks are possibly lost in loss record 904 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82DA5: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 3,024 bytes in 1 blocks are possibly lost in loss record 906 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF2D44: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 3,400 bytes in 1 blocks are possibly lost in loss record 908 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF2D1B: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 3,540 bytes in 1 blocks are possibly lost in loss record 909 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF2CA0: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 3,672 bytes in 1 blocks are possibly lost in loss record 910 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82DCE: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 3,804 bytes in 1 blocks are possibly lost in loss record 911 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82D01: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 4,004 bytes in 1 blocks are possibly lost in loss record 912 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82F91: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 4,056 bytes in 1 blocks are possibly lost in loss record 913 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82F68: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 4,308 bytes in 1 blocks are possibly lost in loss record 917 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A83035: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 4,396 bytes in 1 blocks are possibly lost in loss record 919 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82F3F: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 4,476 bytes in 1 blocks are possibly lost in loss record 920 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF2E3A: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 4,568 bytes in 1 blocks are possibly lost in loss record 921 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF2C4E: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 4,584 bytes in 1 blocks are possibly lost in loss record 922 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82BB9: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 4,608 bytes in 1 blocks are possibly lost in loss record 923 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82E20: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 4,760 bytes in 1 blocks are possibly lost in loss record 924 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82B15: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 4,764 bytes in 1 blocks are possibly lost in loss record 925 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82E72: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 4,808 bytes in 1 blocks are possibly lost in loss record 926 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82E49: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 4,884 bytes in 1 blocks are possibly lost in loss record 927 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82D7C: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 4,904 bytes in 1 blocks are possibly lost in loss record 928 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82D53: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 4,916 bytes in 1 blocks are possibly lost in loss record 929 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82C5D: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 4,932 bytes in 1 blocks are possibly lost in loss record 930 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A830B0: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 5,116 bytes in 1 blocks are possibly lost in loss record 931 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82BE2: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 5,344 bytes in 1 blocks are possibly lost in loss record 932 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82B3E: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 5,916 bytes in 1 blocks are possibly lost in loss record 933 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A8300C: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 6,192 bytes in 1 blocks are possibly lost in loss record 935 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A8312B: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 6,748 bytes in 1 blocks are possibly lost in loss record 936 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5EF221A: cv::Mat::create(int, int const*, int) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F106E4: cv::_OutputArray::create(int, int, int, int, bool, int) const (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5EBF61F: cv::gemm(cv::_InputArray const&, cv::_InputArray const&, double, cv::_InputArray const&, double, cv::_OutputArray const&, int) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5ECFE59: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4EC6300: cv::Mat::operator=(cv::MatExpr const&) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EE8E1B: stack_grid_bugcar::StackGridNode::initMat() (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x11AAD1: main (in /home/quan/ros_test_ws/devel/lib/stack_grid_bugcar/stack_grid_node)
+==450== 
+==450== 7,504 bytes in 1 blocks are possibly lost in loss record 938 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82C0B: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 7,724 bytes in 1 blocks are possibly lost in loss record 939 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82FE3: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 7,744 bytes in 1 blocks are possibly lost in loss record 940 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF2D6D: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 7,796 bytes in 1 blocks are possibly lost in loss record 941 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82DF7: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 8,216 bytes in 1 blocks are possibly lost in loss record 944 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5EF221A: cv::Mat::create(int, int const*, int) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7BAE488: cv::Mat::create(int, int, int) (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x7BAF508: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x5F40047: cv::parallel_for_(cv::Range const&, cv::ParallelLoopBody const&, double) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7BB7EC5: cv::remap(cv::_InputArray const&, cv::_OutputArray const&, cv::_InputArray const&, cv::_InputArray const&, int, int, cv::Scalar_<double> const&) (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x7BBA346: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x5F3F1D9: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0xA105B45: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+==450==    by 0xA10278F: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+==450==    by 0x5F3FFFF: cv::parallel_for_(cv::Range const&, cv::ParallelLoopBody const&, double) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450== 
+==450== 8,408 bytes in 1 blocks are possibly lost in loss record 945 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A83087: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 8,464 bytes in 1 blocks are possibly lost in loss record 946 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82C86: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 8,704 bytes in 1 blocks are possibly lost in loss record 947 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82B90: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 10,280 bytes in 1 blocks are possibly lost in loss record 948 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82CD8: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 10,956 bytes in 1 blocks are possibly lost in loss record 949 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82D2A: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 11,272 bytes in 1 blocks are possibly lost in loss record 950 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A83102: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 11,700 bytes in 1 blocks are possibly lost in loss record 951 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF2BA3: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 12,404 bytes in 1 blocks are possibly lost in loss record 952 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82F16: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 13,580 bytes in 1 blocks are possibly lost in loss record 953 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A83154: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 16,408 bytes in 1 blocks are possibly lost in loss record 955 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5EF221A: cv::Mat::create(int, int const*, int) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7BAE488: cv::Mat::create(int, int, int) (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x7BAE5FC: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x5F40047: cv::parallel_for_(cv::Range const&, cv::ParallelLoopBody const&, double) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7BB7EC5: cv::remap(cv::_InputArray const&, cv::_OutputArray const&, cv::_InputArray const&, cv::_InputArray const&, int, int, cv::Scalar_<double> const&) (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x7BBA346: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x5F3F1D9: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0xA105B45: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+==450==    by 0xA10278F: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+==450==    by 0x5F3FFFF: cv::parallel_for_(cv::Range const&, cv::ParallelLoopBody const&, double) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450== 
+==450== 16,432 bytes in 2 blocks are possibly lost in loss record 956 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5EF221A: cv::Mat::create(int, int const*, int) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7BAE488: cv::Mat::create(int, int, int) (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x7BAF508: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x5F40047: cv::parallel_for_(cv::Range const&, cv::ParallelLoopBody const&, double) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7BB7EC5: cv::remap(cv::_InputArray const&, cv::_OutputArray const&, cv::_InputArray const&, cv::_InputArray const&, int, int, cv::Scalar_<double> const&) (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x7BBA346: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x5F3F1D9: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0xA105B45: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+==450==    by 0xA0FEAF7: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+==450==    by 0xA0FD3DA: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+==450== 
+==450== 16,480 bytes in 1 blocks are possibly lost in loss record 957 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF2E11: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 16,776 bytes in 1 blocks are possibly lost in loss record 958 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A8305E: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 17,020 bytes in 1 blocks are possibly lost in loss record 959 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82EED: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 22,328 bytes in 1 blocks are possibly lost in loss record 961 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF2C77: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 32,816 bytes in 2 blocks are possibly lost in loss record 964 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5EF221A: cv::Mat::create(int, int const*, int) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7BAE488: cv::Mat::create(int, int, int) (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x7BAE5FC: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x5F40047: cv::parallel_for_(cv::Range const&, cv::ParallelLoopBody const&, double) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7BB7EC5: cv::remap(cv::_InputArray const&, cv::_OutputArray const&, cv::_InputArray const&, cv::_InputArray const&, int, int, cv::Scalar_<double> const&) (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x7BBA346: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x5F3F1D9: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0xA105B45: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+==450==    by 0xA0FEAF7: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+==450==    by 0xA0FD3DA: ??? (in /usr/lib/x86_64-linux-gnu/libtbb.so.2)
+==450== 
+==450== 54,520 bytes in 1 blocks are possibly lost in loss record 965 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F8482C: cv::String::allocate(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5DF3083: cv::String::String(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F26820: cv::ocl::ProgramSource::ProgramSource(char const*) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x7A82C34: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0)
+==450==    by 0x4010782: call_init (dl-init.c:72)
+==450==    by 0x4010782: _dl_init (dl-init.c:119)
+==450==    by 0x40010C9: ??? (in /lib/x86_64-linux-gnu/ld-2.27.so)
+==450==    by 0x2: ???
+==450==    by 0x1FFEFFFC12: ???
+==450==    by 0x1FFEFFFC55: ???
+==450==    by 0x1FFEFFFC68: ???
+==450== 
+==450== 320,048 bytes in 2 blocks are possibly lost in loss record 969 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5EF221A: cv::Mat::create(int, int const*, int) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F0DEFD: cv::_OutputArray::create(cv::Size_<int>, int, int, bool, int) const (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5E36BF8: cv::Mat::convertTo(cv::_OutputArray const&, int, double, double) const (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4EDC971: void stack_grid_bugcar::SimpleLayerObj::callback<nav_msgs::OccupancyGrid_<std::allocator<void> > >(nav_msgs::OccupancyGrid_<std::allocator<void> >::ConstPtr) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EE2685: boost::_mfi::mf1<void, stack_grid_bugcar::SimpleLayerObj, boost::shared_ptr<nav_msgs::OccupancyGrid_<std::allocator<void> > const> >::operator()(stack_grid_bugcar::SimpleLayerObj*, boost::shared_ptr<nav_msgs::OccupancyGrid_<std::allocator<void> > const>) const (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EE1C0D: void boost::_bi::list2<boost::_bi::value<stack_grid_bugcar::SimpleLayerObj*>, boost::arg<1> >::operator()<boost::_mfi::mf1<void, stack_grid_bugcar::SimpleLayerObj, boost::shared_ptr<nav_msgs::OccupancyGrid_<std::allocator<void> > const> >, boost::_bi::rrlist1<boost::shared_ptr<nav_msgs::OccupancyGrid_<std::allocator<void> > const> const&> >(boost::_bi::type<void>, boost::_mfi::mf1<void, stack_grid_bugcar::SimpleLayerObj, boost::shared_ptr<nav_msgs::OccupancyGrid_<std::allocator<void> > const> >&, boost::_bi::rrlist1<boost::shared_ptr<nav_msgs::OccupancyGrid_<std::allocator<void> > const> const&>&, int) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EE1278: void boost::_bi::bind_t<void, boost::_mfi::mf1<void, stack_grid_bugcar::SimpleLayerObj, boost::shared_ptr<nav_msgs::OccupancyGrid_<std::allocator<void> > const> >, boost::_bi::list2<boost::_bi::value<stack_grid_bugcar::SimpleLayerObj*>, boost::arg<1> > >::operator()<boost::shared_ptr<nav_msgs::OccupancyGrid_<std::allocator<void> > const> const&>(boost::shared_ptr<nav_msgs::OccupancyGrid_<std::allocator<void> > const> const&) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EE0612: boost::detail::function::void_function_obj_invoker1<boost::_bi::bind_t<void, boost::_mfi::mf1<void, stack_grid_bugcar::SimpleLayerObj, boost::shared_ptr<nav_msgs::OccupancyGrid_<std::allocator<void> > const> >, boost::_bi::list2<boost::_bi::value<stack_grid_bugcar::SimpleLayerObj*>, boost::arg<1> > >, void, boost::shared_ptr<nav_msgs::OccupancyGrid_<std::allocator<void> > const> const&>::invoke(boost::detail::function::function_buffer&, boost::shared_ptr<nav_msgs::OccupancyGrid_<std::allocator<void> > const> const&) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EE319D: boost::function1<void, boost::shared_ptr<nav_msgs::OccupancyGrid_<std::allocator<void> > const> const&>::operator()(boost::shared_ptr<nav_msgs::OccupancyGrid_<std::allocator<void> > const> const&) const (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EE2978: boost::detail::function::void_function_obj_invoker1<boost::function<void (boost::shared_ptr<nav_msgs::OccupancyGrid_<std::allocator<void> > const> const&)>, void, boost::shared_ptr<nav_msgs::OccupancyGrid_<std::allocator<void> > const> >::invoke(boost::detail::function::function_buffer&, boost::shared_ptr<nav_msgs::OccupancyGrid_<std::allocator<void> > const>) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450== 
+==450== 1,000,024 bytes in 1 blocks are possibly lost in loss record 971 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5EF221A: cv::Mat::create(int, int const*, int) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4EC5EF6: cv::Mat::create(int, int, int) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EEC204: cv::Mat::Mat(cv::Size_<int>, int, cv::Scalar_<double> const&) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EE8B9A: stack_grid_bugcar::StackGridNode::initMat() (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x11AAD1: main (in /home/quan/ros_test_ws/devel/lib/stack_grid_bugcar/stack_grid_node)
+==450== 
+==450== 1,000,024 bytes in 1 blocks are possibly lost in loss record 972 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5EF221A: cv::Mat::create(int, int const*, int) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F0DEFD: cv::_OutputArray::create(cv::Size_<int>, int, int, bool, int) const (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5E36BF8: cv::Mat::convertTo(cv::_OutputArray const&, int, double, double) const (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4EEA4BD: stack_grid_bugcar::StackGridNode::simpleStack(cv::Mat&, cv::Mat&) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EE9168: stack_grid_bugcar::StackGridNode::run() (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x11AC48: main (in /home/quan/ros_test_ws/devel/lib/stack_grid_bugcar/stack_grid_node)
+==450== 
+==450== 1,000,024 bytes in 1 blocks are possibly lost in loss record 973 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5EF221A: cv::Mat::create(int, int const*, int) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5F0BCAF: cv::_OutputArray::create(int, int const*, int, int, bool, int) const (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5E01AED: cv::inRange(cv::_InputArray const&, cv::_InputArray const&, cv::_InputArray const&, cv::_OutputArray const&) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4EEA8FC: stack_grid_bugcar::StackGridNode::simpleStack(cv::Mat&, cv::Mat&) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EE9168: stack_grid_bugcar::StackGridNode::run() (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x11AC48: main (in /home/quan/ros_test_ws/devel/lib/stack_grid_bugcar/stack_grid_node)
+==450== 
+==450== 4,000,024 bytes in 1 blocks are possibly lost in loss record 974 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5EF221A: cv::Mat::create(int, int const*, int) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4EC5EF6: cv::Mat::create(int, int, int) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EEC204: cv::Mat::Mat(cv::Size_<int>, int, cv::Scalar_<double> const&) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EE8AF8: stack_grid_bugcar::StackGridNode::initMat() (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x11AAD1: main (in /home/quan/ros_test_ws/devel/lib/stack_grid_bugcar/stack_grid_node)
+==450== 
+==450== 4,000,024 bytes in 1 blocks are possibly lost in loss record 975 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5EF221A: cv::Mat::create(int, int const*, int) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4EC5EF6: cv::Mat::create(int, int, int) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EEC204: cv::Mat::Mat(cv::Size_<int>, int, cv::Scalar_<double> const&) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EE8C3C: stack_grid_bugcar::StackGridNode::initMat() (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x11AAD1: main (in /home/quan/ros_test_ws/devel/lib/stack_grid_bugcar/stack_grid_node)
+==450== 
+==450== 8,000,048 bytes in 2 blocks are possibly lost in loss record 976 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5EF221A: cv::Mat::create(int, int const*, int) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5ECEF2D: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4EC6300: cv::Mat::operator=(cv::MatExpr const&) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EDA781: stack_grid_bugcar::SimpleLayerObj::update_costmap_size(int, int) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EE7D18: stack_grid_bugcar::StackGridNode::StackGridNode() (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x11AAC2: main (in /home/quan/ros_test_ws/devel/lib/stack_grid_bugcar/stack_grid_node)
+==450== 
+==450== 8,000,048 bytes in 2 blocks are possibly lost in loss record 977 of 977
+==450==    at 0x4C2FB0F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==450==    by 0x5DF3381: cv::fastMalloc(unsigned long) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5EF221A: cv::Mat::create(int, int const*, int) (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x5ECEF2D: ??? (in /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0)
+==450==    by 0x4EC6300: cv::Mat::operator=(cv::MatExpr const&) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EDA7FD: stack_grid_bugcar::SimpleLayerObj::update_costmap_size(int, int) (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x4EE7D18: stack_grid_bugcar::StackGridNode::StackGridNode() (in /home/quan/ros_test_ws/devel/lib/libstack_grid_bugcar.so)
+==450==    by 0x11AAC2: main (in /home/quan/ros_test_ws/devel/lib/stack_grid_bugcar/stack_grid_node)
+==450== 
+==450== LEAK SUMMARY:
+==450==    definitely lost: 96 bytes in 1 blocks
+==450==    indirectly lost: 0 bytes in 0 blocks
+==450==      possibly lost: 27,811,643 bytes in 112 blocks
+==450==    still reachable: 1,642,770 bytes in 2,764 blocks
+==450==                       of which reachable via heuristic:
+==450==                         newarray           : 9,288 bytes in 9 blocks
+==450==         suppressed: 0 bytes in 0 blocks
+==450== Reachable blocks (those to which a pointer was found) are not shown.
+==450== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==450== 
+==450== For counts of detected and suppressed errors, rerun with: -v
+==450== Use --track-origins=yes to see where uninitialised values come from
+==450== ERROR SUMMARY: 120 errors from 119 contexts (suppressed: 0 from 0)
+

@@ -42,13 +42,15 @@ namespace stack_grid_bugcar{
             }
 
             virtual void matchSize();
-        
-        private:
+
+        protected:
             void reconfigureCB(costmap_2d::GenericPluginConfig &config, uint32_t level);
 
+            void simpleStack();
+            void inflateLayer();
+
             void publishCostmap(costmap_2d::Costmap2D cost_map_);    
-            void processMapCV(int index);
-            void processMapCV_callable(int index);
+            void processMap(int index);
 
             uint8_t updateCharMap(const int8_t img_cell, uint8_t self_cell);   
             uint8_t translateOccupancyToCost(int8_t occupancyValue);
@@ -69,19 +71,17 @@ namespace stack_grid_bugcar{
 
             std::vector<std::shared_ptr<SimpleLayerObj>> static_layers_handler;
             std::vector<std::shared_ptr<std::future<void>>> async_map_process;
-            std::vector<std::shared_ptr<boost::thread>> process_map;
             std::vector<std::shared_ptr<cv::Mat>> layer_mat;
-            std::vector<bool> process_check;
-
-            std::vector<std::shared_ptr<std::atomic<bool>>> async_process_check;
-
+   
             std::mutex data_mutex;
             
             cv::Mat main_map_img;
             cv::Mat inflation_mask;
             cv::Mat obstacle_mask;
-            cv::Mat unknown_mask;
+            cv::Mat dilation_mask;
             cv::Mat obstacle_bounding;
+            cv::Mat gaussian_kernel;
+            cv::Mat dilation_kernel;
 
             tf2_ros::Buffer tfBuffer;
             tf2_ros::TransformListener tf_listener{tfBuffer};

@@ -1,6 +1,10 @@
-#include "stack_grid_bugcar.h"
+#include <stack_grid_bugcar/stack_grid_bugcar.h>
 #include <pluginlib/class_list_macros.h>
- 
+#include <ctime>
+#include <unistd.h>
+#include <iostream>
+#include <chrono>
+
 PLUGINLIB_EXPORT_CLASS(stack_grid_bugcar::StackGrid, costmap_2d::Layer)
  
 using costmap_2d::LETHAL_OBSTACLE;
@@ -67,20 +71,10 @@ void StackGrid::onInitialize(){
                                global_frame_, msg_type, topic)
         ));
         async_map_process.push_back(std::shared_ptr<std::future<void>>(
-            new std::future<void>(std::async(std::launch::async,&StackGrid::processMapCV_callable, this, count))       
-        ));
-        async_process_check.push_back(std::shared_ptr<std::atomic<bool>>(
-            new std::atomic<bool>(false)
-        ));
-        
-        
-        //process_map.push_back(boost::shared_ptr<boost::thread>(
-        //    new boost::thread(boost::bind(&StackGrid::processMapCV, this, 
-         //                     count))));
-                              
+            new std::future<void>));
 
         layer_mat.push_back(std::shared_ptr<cv::Mat>(new cv::Mat()));
-        process_check.push_back(true);
+
         static_layers_handler.back()->link_mat(layer_mat.back());
 
         if(enable_publish)
@@ -100,7 +94,7 @@ void StackGrid::onInitialize(){
     }
     
 }   
-void StackGrid::processMapCV_callable(int index){
+void StackGrid::processMap(int index){
 
     ros::Time latest_time = static_layers_handler[index]->getLatestTime();
     geometry_msgs::TransformStamped geo_transform;
@@ -114,19 +108,46 @@ void StackGrid::processMapCV_callable(int index){
     static_layers_handler[index]->update_main_costmap_origin(costmap_stamped_origin);
 
     int err_code = static_layers_handler[index]->transform_to_fit(geo_transform);
-
-    process_check[index] = true;
-
 } 
 
 void StackGrid::reconfigureCB(costmap_2d::GenericPluginConfig &config, uint32_t level){
     enabled_ = config.enabled;
 }
  
+void StackGrid::simpleStack(){
+    main_map_img = cv::Mat(size_x_,size_y_, CV_32FC1,(float)DEFAULT_OCCUPANCY_VALUE);
+    
+    for(int i =  0; i < static_layers_handler.size(); ++i){
+        *async_map_process[i] = std::async(std::launch::async,&StackGrid::processMap, this, i );
+    }
+    while(!std::all_of(async_map_process.begin(), async_map_process.end(),
+        [](auto f){return f->wait_for(std::chrono::seconds(0)) == std::future_status::ready;})){
+        
+        std::this_thread::yield();
+    }
+    
+    for(int i =  0; i < static_layers_handler.size(); ++i){
+        cv::max(main_map_img, *layer_mat[i], main_map_img);
+        
+    }
+}
+void StackGrid::inflateLayer(){
+    main_map_img.copyTo(obstacle_mask);
+    obstacle_mask.setTo(-1, obstacle_mask < 100);
+
+    cv::dilate(obstacle_mask, dilation_mask, dilation_kernel);
+    dilation_mask.setTo(99, dilation_mask == 100);
+    
+    cv::filter2D(dilation_mask, inflation_mask, -1.0, gaussian_kernel, cv::Point(-1,-1));
+    inflation_mask.setTo(-1, inflation_mask < 1.0);
+
+    cv::max(main_map_img, inflation_mask, main_map_img);
+    cv::max(main_map_img, dilation_mask, main_map_img);
+}
 void StackGrid::updateBounds(double robot_x, double robot_y, double robot_yaw, double* min_x,
                                             double* min_y, double* max_x, double* max_y){
     
-    
+    auto start = std::chrono::high_resolution_clock::now();
     double len = sqrt(pow(size_x_*resolution_,2)+pow(size_y_*resolution_,2));
     double dx = (len/2.0)*cos(M_PI/4);
     double dy = (len/2.0)*sin(M_PI/4);
@@ -138,47 +159,50 @@ void StackGrid::updateBounds(double robot_x, double robot_y, double robot_yaw, d
     origin_x_ = layered_costmap_->getCostmap()->getOriginX();
     origin_y_ = layered_costmap_->getCostmap()->getOriginY();
 
-    resetMaps();
+    //resetMaps();
 
     costmap_stamped_origin.pose.position.x = origin_x_;
     costmap_stamped_origin.pose.position.y = origin_y_;
     costmap_stamped_origin.header.stamp = ros::Time::now();
+
+    simpleStack();
+    //inflateLayer();
+
+    /*
     
     main_map_img = cv::Mat(size_x_,size_y_, CV_32FC1,(float)DEFAULT_OCCUPANCY_VALUE);
     
     for(int i =  0; i < static_layers_handler.size(); ++i){
-        std::future<void> process_(std::async(std::launch::async,&StackGrid::processMapCV_callable, this, i ));
+        *async_map_process[i] = std::async(std::launch::async,&StackGrid::processMap, this, i );
     }
-    while(true){
-        std::lock_guard<std::mutex> lg(data_mutex);
-        if(std::all_of(process_check.begin(), process_check.end(), 
-                                                  [](bool i){return i;})){
-            std::fill(process_check.begin(), process_check.end(), false);
-            break;
-        }
-    }  
+    while(!std::all_of(async_map_process.begin(), async_map_process.end(),
+        [](auto f){return f->wait_for(std::chrono::seconds(0)) == std::future_status::ready;})){
+        
+        std::this_thread::yield();
+    }
     
     for(int i =  0; i < static_layers_handler.size(); ++i){
         cv::max(main_map_img, *layer_mat[i], main_map_img);
         
     }
+
+    main_map_img.copyTo(obstacle_mask);
+    obstacle_mask.setTo(-1, obstacle_mask < 100);
+
+    cv::dilate(obstacle_mask, dilation_mask, dilation_kernel);
+    dilation_mask.setTo(99, dilation_mask == 100);
     
-    cv::threshold(main_map_img, obstacle_mask, 99, 100, CV_THRESH_TOZERO);
-    cv::threshold(main_map_img, unknown_mask, 0, 101, CV_THRESH_BINARY_INV);
-    std::cout << obstacle_mask << std::endl;
+    cv::filter2D(dilation_mask, inflation_mask, -1.0, gaussian_kernel, cv::Point(-1,-1));
+    inflation_mask.setTo(-1, inflation_mask < 1.0);
 
-    int dilate_radius_cells = layered_costmap_->getInscribedRadius()/resolution_;
-    cv::Mat inflation_element = cv::getStructuringElement(cv::MORPH_ELLIPSE, 
-                      cv::Size(dilate_radius_cells*2 + 1,dilate_radius_cells*2 + 1));
-    cv::dilate(obstacle_mask, inflation_mask, inflation_element);
-    inflation_mask.setTo(99, inflation_mask == 100);
-
-    int inflation_rad_cells = inflation_rad_/resolution_;
-    cv::GaussianBlur(inflation_mask, inflation_mask, 
-                      cv::Size(inflation_rad_cells*2 + 1,inflation_rad_cells*2 + 1),0);
     cv::max(main_map_img, inflation_mask, main_map_img);
-    cv::max(main_map_img, unknown_mask, main_map_img);
-    main_map_img.setTo(-1, main_map_img == 101);    
+    cv::max(main_map_img, dilation_mask, main_map_img);
+
+    */
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<int64_t, std::nano> dur_ns = (end - start);
+    int64_t measured_ns = dur_ns.count();
+    ROS_INFO_STREAM(measured_ns);
     
 }
 
@@ -202,9 +226,18 @@ void StackGrid::matchSize(){
     resizeMap(master->getSizeInCellsX(), master->getSizeInCellsY(), master->getResolution(),
               master->getOriginX(), master->getOriginY());
     for(int i = 0; i < static_layers_handler.size(); ++i){
-        static_layers_handler[i]->update_size(size_x_, size_y_);
+        static_layers_handler[i]->set_costmap_param(this);
     }
     main_map_img = cv::Mat::zeros(size_y_, size_x_, CV_32FC1);
+
+    int inflation_rad_cells = inflation_rad_/resolution_;
+    gaussian_kernel = cv::getGaussianKernel(inflation_rad_cells*2+1,0.0, CV_32FC1);
+    gaussian_kernel = gaussian_kernel * gaussian_kernel.t();
+
+    int dilate_radius_cells = layered_costmap_->getInscribedRadius()/resolution_;
+    cv::Mat dilation_kernel = cv::getStructuringElement(cv::MORPH_ELLIPSE, 
+                      cv::Size(dilate_radius_cells*2 + 1,dilate_radius_cells*2 + 1),
+                      cv::Point(-1,-1));
 }
 
 uint8_t StackGrid::updateCharMap(const int8_t img_cell, uint8_t master_cell){

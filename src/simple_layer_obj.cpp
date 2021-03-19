@@ -1,4 +1,4 @@
-#include "simple_layer_obj.h"
+#include <stack_grid_bugcar/simple_layer_obj.h>
 
 namespace stack_grid_bugcar{
 
@@ -39,7 +39,15 @@ namespace stack_grid_bugcar{
             costmap_origin_old.pose = costmap_origin.pose;
         }
     }
-    void SimpleLayerObj::update_size(int size_x, int size_y){
+    void SimpleLayerObj::getStackOrigin(geometry_msgs::PoseStamped stack_origin){
+        costmap_origin.header = stack_origin.header;
+        costmap_origin.pose = stack_origin.pose;
+        if(abs(last_callback_time.toSec() - ros::Time::now().toSec()) < 2.0){
+            costmap_origin_old.header = costmap_origin.header;
+            costmap_origin_old.pose = costmap_origin.pose;
+        }
+    }
+    void SimpleLayerObj::update_costmap_size(int size_x, int size_y){
         costmap_dim.width = size_x;
         costmap_dim.height = size_y;
         
@@ -48,8 +56,14 @@ namespace stack_grid_bugcar{
         if(!data_img_fit.lock()->isContinuous()){
             *data_img_fit.lock() = data_img_fit.lock()->clone();
             cv::patchNaNs(*data_img_fit.lock(), (float)DEFAULT_OCCUPANCY_VALUE);
-        }
-        
+        }   
+    }
+    void SimpleLayerObj::update_costmap_resolution(double resolution_){
+        costmap_resolution = resolution_;
+    }
+    void SimpleLayerObj::set_costmap_param(costmap_2d::Costmap2D *costmap){
+        update_costmap_size(costmap->getSizeInCellsX(), costmap->getSizeInCellsY());
+        update_costmap_resolution(costmap->getResolution());
     }
     int SimpleLayerObj::transform_to_fit(geometry_msgs::TransformStamped tf_3d_msg){
         std::lock_guard<std::mutex> lg(data_mutex);
@@ -66,8 +80,8 @@ namespace stack_grid_bugcar{
                      abs(last_callback_time.toSec() - ros::Time::now().toSec()) << ", topic: " + sub_topic);
             
             cv::Mat T_costmap = cv::Mat::eye(cv::Size(3,3),CV_32FC1);
-            T_costmap.at<float>(0,2) = (costmap_origin_old.pose.position.x - costmap_origin.pose.position.x) / layer_resolution;
-            T_costmap.at<float>(1,2) = (costmap_origin_old.pose.position.y - costmap_origin.pose.position.y) / layer_resolution;
+            T_costmap.at<float>(0,2) = (costmap_origin_old.pose.position.x - costmap_origin.pose.position.x) / costmap_resolution;
+            T_costmap.at<float>(1,2) = (costmap_origin_old.pose.position.y - costmap_origin.pose.position.y) / costmap_resolution;
             T_costmap = T_costmap(cv::Range(0,2),cv::Range(0,3));
             
             cv::warpAffine(prev_data_img_fit,*data_img_fit.lock(),T_costmap,costmap_dim, 
@@ -77,6 +91,7 @@ namespace stack_grid_bugcar{
             return LATE_UPDATE_ERR;
         }
 
+        
         data_img_float.copyTo(data_img);
         if(data_img.type() != CV_32FC1)
             data_img.convertTo(data_img, CV_32FC1);
@@ -87,8 +102,8 @@ namespace stack_grid_bugcar{
         T_layer.at<float>(1,1) = T_layer.at<float>(0,0);
         T_layer.at<float>(1,0) = sin(angle*2);
         T_layer.at<float>(0,1) = -T_layer.at<float>(1,0);
-        T_layer.at<float>(0,3) = layer_origin.pose.position.x;
-        T_layer.at<float>(1,3) = layer_origin.pose.position.y;
+        T_layer.at<float>(0,3) =  costmap_dim.width * costmap_resolution / 2 + layer_origin.pose.position.x;
+        T_layer.at<float>(1,3) =  costmap_dim.height * costmap_resolution / 2 + layer_origin.pose.position.y;
 
         cv::Mat T_3d_mat = cv::Mat::eye(cv::Size(4,4),CV_32FC1);
         angle = atan2( tf_3d_msg.transform.rotation.z, tf_3d_msg.transform.rotation.w);
@@ -99,21 +114,29 @@ namespace stack_grid_bugcar{
         T_3d_mat.at<float>(0,3) = tf_3d_msg.transform.translation.x;
         T_3d_mat.at<float>(1,3) = tf_3d_msg.transform.translation.y;
 
-        T_layer = T_3d_mat.inv() * T_layer;
+        //std::cout << T_layer << std::endl;
+        //std::cout << T_3d_mat << std::endl;
+        //ROS_INFO_STREAM(layer_origin.pose.position.x << " " << layer_origin.pose.position.y);
+
+        T_layer = T_3d_mat * T_layer;
 
         cv::Mat T_costmap = cv::Mat::eye(cv::Size(4,4),CV_32FC1);
         T_costmap.at<float>(0,3) = costmap_origin_old.pose.position.x;
         T_costmap.at<float>(1,3) = costmap_origin_old.pose.position.y;
         
         cv::Mat tf_2d_mat = (T_costmap.inv()*T_layer);
-        cv::Mat tf_2d_mat_2x3 = tf_2d_mat(cv::Range(0,2),cv::Range(0,3));
-        tf_2d_mat_2x3.at<float>(0,2) = tf_2d_mat.at<float>(0,3) / layer_resolution;
-        tf_2d_mat_2x3.at<float>(1,2) = tf_2d_mat.at<float>(1,3) / layer_resolution;
-
+        cv::Mat tf_2d_mat_2x3 = T_layer(cv::Range(0,2),cv::Range(0,3));
+        tf_2d_mat_2x3.at<float>(0,2) = T_layer.at<float>(0,3) / costmap_resolution;
+        tf_2d_mat_2x3.at<float>(1,2) = T_layer.at<float>(1,3) / costmap_resolution;
+        
+        //std::cout << tf_2d_mat_2x3 << std::endl;
         cv::warpAffine(data_img,*data_img_fit.lock(),tf_2d_mat_2x3,costmap_dim, 
                         cv::INTER_LINEAR, cv::BORDER_CONSTANT, DEFAULT_OCCUPANCY_VALUE);
         
+        
+
         cv::patchNaNs(*data_img_fit.lock(), (float)DEFAULT_OCCUPANCY_VALUE);
+
         data_img_fit.lock()->copyTo(prev_data_img_fit);
           
         return 1;
@@ -137,7 +160,7 @@ namespace stack_grid_bugcar{
         
         vis.info.width = costmap_dim.width;
         vis.info.height = costmap_dim.height;
-        vis.info.resolution = layer_resolution;
+        vis.info.resolution = costmap_resolution;
 
         vis.info.origin.position.x = costmap_origin.pose.position.x;
         vis.info.origin.position.y = costmap_origin.pose.position.y;
@@ -148,20 +171,18 @@ namespace stack_grid_bugcar{
     }
 
     template<> void SimpleLayerObj::callback<nav_msgs::OccupancyGrid>(const nav_msgs::OccupancyGrid::ConstPtr input_data){
-        std::lock_guard<std::mutex> lg(data_mutex);
+        //std::lock_guard<std::mutex> lg(data_mutex);
         layer_origin.header = input_data->header;
         layer_origin.pose = input_data->info.origin; 
         layer_resolution = input_data->info.resolution;
 
         last_callback_time = layer_origin.header.stamp;
         
-        data_img_float = cv::Mat(input_data->data).reshape(1,input_data->info.height);
-        data_img_float.convertTo(data_img_float,CV_32FC1);
+        cv::Mat occupancy_grid_mat = cv::Mat(input_data->data).reshape(1,input_data->info.height);
+        cv::Mat occupancy_grid_mat_resize;
         
-        if(!data_img_float.isContinuous()){
-            data_img_float = data_img_float.clone();
-        }
-
+        cv::resize(occupancy_grid_mat, occupancy_grid_mat_resize, cv::Size(), layer_resolution/costmap_resolution, layer_resolution/costmap_resolution);
+        occupancy_grid_mat_resize.convertTo(data_img_float,CV_32FC1);
     }
     
 }

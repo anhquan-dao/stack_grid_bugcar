@@ -1,0 +1,18 @@
+stack_grid:
+  global_frame: odom
+  robot_base_frame: base_link
+
+  resolution: 0.1
+  height: 100
+  width: 100
+
+  update_frequency: 100
+  publish_frequency: 10
+
+  track_unknown: true
+  threshold_occupancy: 90
+  inflation_enable: false
+  inflation_radius: 1
+  inscribed_radius: 0.5
+  static_sources: dfasfsda
+  dfasfsda: {msg_type: OccupancyGrid, topic: map/image_segmentation, enable_publish: false}

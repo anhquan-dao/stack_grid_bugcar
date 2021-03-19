@@ -1,4 +1,0 @@
-numpy
-imutils
-time
-cv2

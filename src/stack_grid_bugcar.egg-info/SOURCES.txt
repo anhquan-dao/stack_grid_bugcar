@@ -1,6 +1,0 @@
-setup.py
-src/stack_grid_bugcar.egg-info/PKG-INFO
-src/stack_grid_bugcar.egg-info/SOURCES.txt
-src/stack_grid_bugcar.egg-info/dependency_links.txt
-src/stack_grid_bugcar.egg-info/requires.txt
-src/stack_grid_bugcar.egg-info/top_level.txt

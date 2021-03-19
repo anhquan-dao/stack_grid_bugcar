@@ -1,0 +1,10 @@
+<launch>
+    <rosparam file="$(find stack_grid_bugcar)/cfg/stack_grid.yaml" command="load" />
+    <param name="use_sim_time" value="true"/>
+
+    <node name="stack_grid" pkg="stack_grid_bugcar" type="stack_grid_node" clear_params="true" output="screen">
+    
+    </node>
+
+
+</launch>
