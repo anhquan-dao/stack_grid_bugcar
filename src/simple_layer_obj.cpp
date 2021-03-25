@@ -8,7 +8,7 @@ namespace stack_grid_bugcar{
         sub_topic = topic;
         global_frame_ = global_frame;
         if(msg_type == "OccupancyGrid"){
-            vis_publisher = layer_handler.advertise<nav_msgs::OccupancyGrid>(parent_node + "/occupancy_grid_handler/" + src_name,5);
+            //vis_publisher = layer_handler.advertise<nav_msgs::OccupancyGrid>(parent_node + "/occupancy_grid_handler/" + src_name,5);
             layer_sub = layer_handler.subscribe<nav_msgs::OccupancyGrid>(sub_topic,1,boost::bind(&SimpleLayerObj::callback<nav_msgs::OccupancyGrid>,this,_1)); 
         }
         ROS_INFO_STREAM("Created simple " + msg_type + " handler of type stack_grid_bugcar::SimpleLayerObj for " + obj_name + ": " + sub_topic);
@@ -178,11 +178,14 @@ namespace stack_grid_bugcar{
 
         last_callback_time = layer_origin.header.stamp;
         
-        cv::Mat occupancy_grid_mat = cv::Mat(input_data->data).reshape(1,input_data->info.height);
-        cv::Mat occupancy_grid_mat_resize;
+        data_img_float = cv::Mat(input_data->data).reshape(1,input_data->info.height);
+        data_img_float.convertTo(data_img_float,CV_32FC1);
+        cv::resize(data_img_float, data_img_float, cv::Size(), layer_resolution/costmap_resolution, layer_resolution/costmap_resolution);
         
-        cv::resize(occupancy_grid_mat, occupancy_grid_mat_resize, cv::Size(), layer_resolution/costmap_resolution, layer_resolution/costmap_resolution);
-        occupancy_grid_mat_resize.convertTo(data_img_float,CV_32FC1);
+        if(!data_img_float.isContinuous()){
+            data_img_float = data_img_float.clone();
+        }
+        //ROS_INFO_STREAM("Hello from the other side");
     }
     
 }

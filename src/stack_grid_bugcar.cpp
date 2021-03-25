@@ -34,13 +34,14 @@ void StackGrid::onInitialize(){
     
     global_frame_ = layered_costmap_->getGlobalFrameID();
 
-    self_costmap_publisher = nh.advertise<nav_msgs::OccupancyGrid>(nh.getNamespace() + "/costmap", 1);
+    //self_costmap_publisher = nh.advertise<nav_msgs::OccupancyGrid>(nh.getNamespace() + "/costmap", 1);
     costmap_stamped_origin.header.frame_id = global_frame_;
 
     std::string source_strings;
     nh.getParam("static_sources", source_strings); 
     nh.getParam("inflation_radius", inflation_rad_);
     nh.param("track_unknown", track_unknown_, true);
+    nh.param("inflation_enable", inflation_enable_, true);
 
     if(track_unknown_){
         default_value_ = costmap_2d::NO_INFORMATION;
@@ -115,23 +116,37 @@ void StackGrid::reconfigureCB(costmap_2d::GenericPluginConfig &config, uint32_t 
 }
  
 void StackGrid::simpleStack(){
-    main_map_img = cv::Mat(size_x_,size_y_, CV_32FC1,(float)DEFAULT_OCCUPANCY_VALUE);
+    main_map_img = cv::Mat(size_y_,size_x_, CV_32FC1,(float)DEFAULT_OCCUPANCY_VALUE);
     
-    for(int i =  0; i < static_layers_handler.size(); ++i){
-        *async_map_process[i] = std::async(std::launch::async,&StackGrid::processMap, this, i );
-    }
-    while(!std::all_of(async_map_process.begin(), async_map_process.end(),
-        [](auto f){return f->wait_for(std::chrono::seconds(0)) == std::future_status::ready;})){
+    // for(int i =  0; i < static_layers_handler.size(); ++i){
+    //     *async_map_process[i] = std::async(std::launch::async,&StackGrid::processMap, this, i );
+    // }
+    // while(!std::all_of(async_map_process.begin(), async_map_process.end(),
+    //     [](auto f){return f->wait_for(std::chrono::seconds(0)) == std::future_status::ready;})){
         
-        std::this_thread::yield();
-    }
+    //     std::this_thread::yield();
+    // }
     
     for(int i =  0; i < static_layers_handler.size(); ++i){
+        ros::Time latest_time = static_layers_handler[i]->getLatestTime();
+        geometry_msgs::TransformStamped geo_transform;
+        try{
+            geo_transform = tfBuffer.lookupTransform(static_layers_handler[i]->get_frame_id(), global_frame_,
+                    (latest_time.toSec() > ros::Time(0).toSec() ? ros::Time(0) : latest_time));
+        }
+        catch (tf2::TransformException &ex){
+            ROS_WARN("%s",ex.what());
+        }
+        static_layers_handler[i]->update_main_costmap_origin(costmap_stamped_origin);
+
+        static_layers_handler[i]->transform_to_fit(geo_transform);
         cv::max(main_map_img, *layer_mat[i], main_map_img);
         
     }
 }
 void StackGrid::inflateLayer(){
+    cv::Mat obstacle_mask;
+    cv::Mat dilation_mask;
     main_map_img.copyTo(obstacle_mask);
     obstacle_mask.setTo(-1, obstacle_mask < 100);
 
@@ -159,14 +174,15 @@ void StackGrid::updateBounds(double robot_x, double robot_y, double robot_yaw, d
     origin_x_ = layered_costmap_->getCostmap()->getOriginX();
     origin_y_ = layered_costmap_->getCostmap()->getOriginY();
 
-    //resetMaps();
+    resetMaps();
 
     costmap_stamped_origin.pose.position.x = origin_x_;
     costmap_stamped_origin.pose.position.y = origin_y_;
     costmap_stamped_origin.header.stamp = ros::Time::now();
 
     simpleStack();
-    //inflateLayer();
+    if(inflation_enable_)
+        inflateLayer();
 
     /*
     
@@ -201,8 +217,9 @@ void StackGrid::updateBounds(double robot_x, double robot_y, double robot_yaw, d
     */
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<int64_t, std::nano> dur_ns = (end - start);
-    int64_t measured_ns = dur_ns.count();
-    ROS_INFO_STREAM(measured_ns);
+    double measured_ns = dur_ns.count();
+    measured_ns /= 1000000000;
+    ROS_INFO_STREAM_THROTTLE(1, "Stack grid plugin running at " << 1.0/measured_ns);
     
 }
 

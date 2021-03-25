@@ -90,6 +90,7 @@ namespace stack_grid_bugcar{
             double max_delay_time;
             double inflation_rad_;
             bool track_unknown_;
+            bool inflation_enable_;
 
             
             
