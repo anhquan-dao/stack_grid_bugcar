@@ -3,44 +3,74 @@
 #define STACK_GRID_NODE
 
 #include <ros/ros.h>
-#include <geometry_msgs/TransformStamped.h>
+#include <costmap_2d/layer.h>
+#include <costmap_2d/layered_costmap.h>
+#include <costmap_2d/GenericPluginConfig.h>
+#include <nav_msgs/OccupancyGrid.h>
+#include <geometry_msgs/Point.h>
+#include <geometry_msgs/PointStamped.h>
 #include <geometry_msgs/PoseStamped.h>
-#include <stack_grid_bugcar/stack_grid_bugcar.h>
+#include <std_msgs/String.h>
+#include <tf/transform_listener.h>
+#include <tf2_ros/transform_listener.h>
+
+#include <cmath>
+#include <algorithm>
+#include <memory>
+#include <future>
+#include <thread>
+#include <mutex>
+#include <eigen3/Eigen/Dense>
+#include <opencv2/opencv.hpp>
+
 #include <stack_grid_bugcar/single_layer_handler.h>
 
 namespace stack_grid_bugcar{
+
+    /** Temporal stack maximum policy */
+    static int MAX_TEMP = 0;
+
+    /** Main mapping/stacking policy */
+    static int AVG_STACK = 0;
+
+
     class StackGridNode{
         public:
             StackGridNode();
             ~StackGridNode(){}
 
            /**
-            * Initalize matrices
-            * @brief initialize all the necessary matrices after class construction
+            * @brief Initialize all the necessary matrices after class construction
             */
             void initMat();
-            void run();
 
-        
+            void run();
+      
         protected:
            /**
-            * @brief Get transformed input data to baselink frame
-            * 
+            * @brief Get transformed input data in baselink frame.
+            * The operation will spawn a thread to process the input layer
+            * @param index index of the layer handler
             */
-            int processMap(int index);
+            int processInputLayer(int index);
 
            /**
             * @brief Simple stacking method: avg(stack, input(s))
-            * @param input_stack cv::Mat should be in CV_32F
-            * @param output_stack cv::Mat should be in CV_8S
+            * @param prev_stack previous stack
+            * @param output_stack output stack
+            * @param temp_policy policy for temporal stacking
+            * @param main_policy policy for fusing temporal stack and main stack
             */
-            void simpleStack(cv::Mat &input_stack, cv::Mat &output_stack);
-;
+            void simpleStack(cv::Mat &prev_stack, cv::Mat &output_stack, int temp_policy, int main_policy);
+
            /**
-            * 
-            * 
-            */
+            * @brief Temporarily stack all input layers for later use
+            * @param policy stacking policy
+            */ 
+            void getTemporalStack(int policy);
+
             void thresholdStack(cv::Mat &stack, float threshold_value);
+           
            /**
             * @brief Inflate map to create danger zone
             * @param main_stack Input Stack
@@ -61,7 +91,12 @@ namespace stack_grid_bugcar{
             void imshowOccupancyGrid(std::string name, const cv::Mat &og_mat){
                 cv::Mat img;
                 og_mat.convertTo(img, CV_8UC1);
-                img.setTo(255, og_mat == 0);
+                if(og_mat.type() == CV_8SC1 || CV_32FC1){
+                    img.setTo(255, og_mat == 0);
+                    
+                } else if(og_mat.type() == CV_8UC1){
+                    img.setTo(255, og_mat == 1);
+                }
                 cv::imshow(name, img);
                 cv::waitKey(1);
             }
@@ -80,16 +115,26 @@ namespace stack_grid_bugcar{
             geometry_msgs::TransformStamped current_global_baselink_tf;
             geometry_msgs::TransformStamped old_global_baselink_tf;
 
+            /** Main stack to stack all inputs against*/
             cv::Mat stack;
             cv::Mat threshold_stack;
-            cv::Mat stack_int;
-            cv::Mat temp_stack;
-            cv::Mat unknown_mask;
-            cv::Mat threshold_mask;
-
-            cv::Mat obstacle_mask;
-            cv::Mat inflation_mask;
             
+           /** @name Operating matrices
+             * Used for intermediate calculation
+             */
+            ///@{
+            /** Temporal stack to hold input layers for later operation */
+            cv::Mat temp_stack;
+            /** Mask of inflated region */
+            cv::Mat inflation_mask;
+            /** Mask of unknown region */
+            cv::Mat unknown_mask;
+            /** Mask for thresholding main stack */
+            cv::Mat threshold_mask;
+            /** Used for publishing */
+            cv::Mat publish_stack;
+            ///@}
+
             bool inflation_enable;
             double inflation_rad;
             double inscribed_rad;
@@ -97,9 +142,13 @@ namespace stack_grid_bugcar{
             cv::Mat gaussian_kernel;
             cv::Mat dilation_kernel;
 
+            /** Transform matrix between global and baselink frame at current time */
             cv::Mat T_global_baselink_current{cv::Mat::eye(cv::Size(3,3), CV_32FC1)};
+            /** Transform matrix between global and baselink frame at past time */
             cv::Mat T_global_baselink_old{cv::Mat::eye(cv::Size(3,3), CV_32FC1)};
+            /** Time shifting matrix between current and most recent transform */
             cv::Mat T_time_shift{cv::Size(3,3), CV_32FC1};
+            /** Center shift matrix */
             cv::Mat T_center_shift{cv::Mat::eye(cv::Size(3,3), CV_32FC1)};
 
             double update_frequency;
@@ -122,7 +171,6 @@ namespace stack_grid_bugcar{
 
             std::vector<std::shared_ptr<LayerHandler>> static_layers_handler;
             std::vector<std::shared_ptr<std::future<int>>> async_map_process;
-            std::vector<std::shared_ptr<cv::Mat>> layer_mat;
 
             std::future<bool> async_publisher;
    

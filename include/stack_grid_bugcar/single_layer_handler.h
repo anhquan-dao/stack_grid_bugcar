@@ -39,11 +39,10 @@ class LayerHandler{
         int transform_to_baselink(geometry_msgs::TransformStamped tf_3d_msg);
 
         void get_transformed_input(cv::Mat &output){
-            data_img_float.convertTo(output, output.type());
-            output -= 1;
+            data_img_8u.convertTo(output, output.type());
         }
         bool input_is_empty(){
-            return data_img.empty();
+            return raw_data_buffer.empty();
         }
         ros::Time getLatestTime();
 
@@ -57,12 +56,9 @@ class LayerHandler{
         std::string global_frame_;
         template<class msg_type> void callback(const typename msg_type::ConstPtr input_data);
         
-        cv::Mat data_img;
+        // cv::Mat data_img;
         cv::Mat data_img_8u;
-        cv::Mat data_img_float;
-        std::weak_ptr<cv::Mat> data_img_fit;
-        cv::Mat prev_data_img_fit;
-        std::vector<float> raw_data_buffer;
+        cv::Mat raw_data_buffer;
 
         double layer_resolution;
         double stack_resolution;

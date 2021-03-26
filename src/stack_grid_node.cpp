@@ -32,8 +32,10 @@ namespace stack_grid_bugcar{
         nh.param("height", height, 20);
         nh.param("width", width, 20);
 
-        size_x = width/resolution;
-        size_y = height/resolution;
+        size_x = height/resolution;
+        size_y = width/resolution;
+
+        grid_.data.resize(size_y*size_x);
 
         nh.param("update_frequency", update_frequency, 10.0);
         cycle_in_millis = 1000*(1/update_frequency);
@@ -60,11 +62,11 @@ namespace stack_grid_bugcar{
 
         if(track_unknown_){
             default_value = -1;
-            DEFAULT_OCCUPANCY_VALUE = -1;
+            // DEFAULT_OCCUPANCY_VALUE = -1;
         }
         else{
             default_value = 0;
-            DEFAULT_OCCUPANCY_VALUE = 0;
+            // DEFAULT_OCCUPANCY_VALUE = 0;
         }
 
         ROS_INFO_STREAM("Subscribed to for static layer: " << source_strings.c_str());
@@ -93,17 +95,22 @@ namespace stack_grid_bugcar{
             static_layers_handler.back()->update_stack_size(size_x, size_y);
             static_layers_handler.back()->update_stack_resolution(resolution);
         }
-        
+        ROS_INFO_STREAM("HELLO");
     }
 
     void StackGridNode::initMat(){
-        stack = cv::Mat(cv::Size(size_x, size_y), CV_32FC1, -1.0);
-        stack_int = cv::Mat(cv::Size(size_x, size_y), CV_8SC1, -1.0);
-        temp_stack = cv::Mat(cv::Size(size_x, size_y), CV_32FC1, -1.0);
-        //unknown_mask = cv::Mat(cv::Size(size_x, size_y), CV_8SC1);
+        stack = cv::Mat(cv::Size(size_x, size_y), CV_8UC1);
+        stack = 0;
+
+        temp_stack = cv::Mat(cv::Size(size_x, size_y), CV_8UC1);
+        temp_stack = 0;
+
+        publish_stack = cv::Mat(cv::Size(size_x, size_y), CV_8SC1, -1);
+        // unknown_mask = cv::Mat(cv::Size(size_x, size_y), CV_8SC1);
         
-        T_center_shift.at<float>(0,2) = -width / resolution /2;
-        T_center_shift.at<float>(1,2) = -height / resolution /2;
+        
+        T_center_shift.at<float>(0,2) = -size_x / 2.0;
+        T_center_shift.at<float>(1,2) = -size_y / 2.0;
 
         gaussian_kernel = cv::getGaussianKernel((inflation_rad/resolution)*2+1,0.0, CV_32FC1);
         gaussian_kernel = gaussian_kernel * gaussian_kernel.t();
@@ -115,42 +122,33 @@ namespace stack_grid_bugcar{
     }
     
     void StackGridNode::run(){
-        auto timer1 = std::chrono::high_resolution_clock::now();
-        auto timer2 = std::chrono::high_resolution_clock::now();
         //async_publisher = std::async(std::launch::async, []{return true;});
         while(ros::ok()){
-            timer1 = std::chrono::high_resolution_clock::now();
-            
+            ros::Rate r_(update_frequency);
+
             getTransformToCurrent();
             shiftToCurrentFrame(stack, T_time_shift);
 
             //async_publisher.wait_for(std::chrono::seconds(1));
 
-            simpleStack(stack, threshold_stack);
-            threshold_stack.convertTo(stack, stack.type());
+            simpleStack(stack, threshold_stack, MAX_TEMP, AVG_STACK);
+            
+            threshold_stack.copyTo(stack);
 
             thresholdStack(threshold_stack, threshold_occupancy);
 
             if(inflation_enable){
                 inflateLayer(threshold_stack, gaussian_kernel, dilation_kernel);
             }
-            
-            publishStack(threshold_stack);
-            
+
+            threshold_stack.convertTo(publish_stack, CV_8SC1);
+            publish_stack -= 1;
+            publishStack(publish_stack);
+
+            imshowOccupancyGrid("Output stack", publish_stack);
             //async_publisher = std::async(std::launch::async, [this]{return publishStack(threshold_stack);});
 
-            timer2 = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<int64_t, std::nano> dur_ns = (timer2 - timer1);
-            double measured_ns = dur_ns.count();
-            measured_ns /= 1000000000.0;
-            measured_ns = 1/measured_ns;
-
-            if(measured_ns < update_frequency){
-                ROS_WARN_STREAM_THROTTLE(1, "Stack grid did not achieve desired update frequency: " << update_frequency << ", actually took " << 1/measured_ns);
-            }
-            else{
-                ros::Duration(1/update_frequency - 1/measured_ns).sleep();
-            }
+            r_.sleep();
             //ROS_INFO_STREAM_THROTTLE(1, "Stack grid is running at " << measured_ns << " Hz");
 
             ros::spinOnce();
@@ -184,7 +182,7 @@ namespace stack_grid_bugcar{
        
     }
 
-    int StackGridNode::processMap(int index){
+    int StackGridNode::processInputLayer(int index){
         ros::Time latest_time = static_layers_handler[index]->getLatestTime();
         geometry_msgs::TransformStamped geo_transform;
         try{
@@ -198,70 +196,73 @@ namespace stack_grid_bugcar{
         return static_layers_handler[index]->transform_to_baselink(geo_transform);
     }
     
-    void StackGridNode::simpleStack(cv::Mat &input_stack, cv::Mat &output_stack){
-        if(temp_stack.size() != cv::Size(size_x, size_y)){
-            temp_stack = cv::Mat(cv::Size(size_x, size_y), CV_32FC1, -1);
-        }
-        temp_stack.setTo(-1);
+    void StackGridNode::simpleStack(cv::Mat &prev_stack, cv::Mat &output_stack, int temp_policy, int main_policy){
+        getTemporalStack(temp_policy);
 
-        for(int i =  0; i < static_layers_handler.size(); ++i){
-            *async_map_process[i] = std::async(std::launch::async,&StackGridNode::processMap, this, i );
-        }
-        while(!std::all_of(async_map_process.begin(), async_map_process.end(),
-            [](auto f){return f->wait_for(std::chrono::seconds(1)) == std::future_status::ready;})){
-            
-            std::this_thread::yield();
-        }
-        cv::Mat input_temp = cv::Mat(temp_stack);
-        for(int i =  0; i < static_layers_handler.size(); ++i){
-            if(!static_layers_handler[i]->input_is_empty()){
-                static_layers_handler[i]->get_transformed_input(input_temp);
-                cv::max(temp_stack, input_temp, temp_stack); 
-            }
-        }
+        // imshowOccupancyGrid("temp stack",temp_stack); 
+        // ROS_INFO_STREAM("temp_stack" << temp_stack.type());
+
         
-        cv::Mat newROI;
-        temp_stack.convertTo(newROI, CV_8SC1);
-        newROI.setTo(100, newROI >= 0);
-        newROI.setTo(0, newROI == -1);
-        
-        cv::Mat mat;
-        cv::bitwise_and(input_stack, newROI, mat);
-        mat.convertTo(mat, CV_32FC1);
-        cv::add(mat, temp_stack, temp_stack);
-
-        //imshowOccupancyGrid("temp stack",temp_stack); 
-        //imshowOccupancyGrid("previous stack", stack_int);
-
-        /*
-        temp_stack.setTo(10, temp_stack == 0);
+        // temp_stack.setTo(10, temp_stack == 0);
         
         //ROS_INFO_STREAM("Stacking");
-        temp_stack *= 0.0;
-        temp_stack += input_stack * 1.0;
-        */
+        // temp_stack *= 1.0;
+        // temp_stack += prev_stack * 0.0;
+        
         //ROS_INFO_STREAM("Adding temp stack");
         
         //ROS_INFO_STREAM("Averaging");
 
-        temp_stack.convertTo(output_stack, CV_8SC1);
-        //imshowOccupancyGrid("output stack", output_stack);
+        temp_stack.convertTo(output_stack, CV_8UC1);
+        // imshowOccupancyGrid("output stack", output_stack);
+        
+    }
 
-        /*
-        cv::inRange(output_stack, 0, threshold_occupancy, threshold_mask);
+    void StackGridNode::getTemporalStack(int policy){
+        if(temp_stack.size() != cv::Size(size_x, size_y)){
+            temp_stack = cv::Mat(cv::Size(size_x, size_y), CV_8UC1, 0);
+        }
+        temp_stack = 0;
 
-        output_stack.setTo(0, threshold_mask);
-        output_stack.setTo(-1, threshold_stack < 0);
-        output_stack.setTo(100, threshold_stack > threshold_occupancy+1);
-        */
+        // for(int i =  0; i < static_layers_handler.size(); ++i){
+        //     *async_map_process[i] = std::async(&StackGridNode::processInputLayer, this, i );
+        // }
+        // while(!std::all_of(async_map_process.begin(), async_map_process.end(),
+        //     [](auto f){return f->wait_for(std::chrono::seconds(1)) == std::future_status::ready;})){
+            
+        //     std::this_thread::yield();
+        // }
+
+        if(policy == MAX_TEMP){
+            for(int i =  0; i < static_layers_handler.size(); ++i){
+                if(!static_layers_handler[i]->input_is_empty()){  
+                    ros::Time latest_time = static_layers_handler[i]->getLatestTime();
+                    geometry_msgs::TransformStamped geo_transform;
+                    try{
+                        geo_transform = tfBuffer.lookupTransform(static_layers_handler[i]->get_frame_id(), robot_frame,
+                                        (latest_time.toSec() > ros::Time(0).toSec() ? ros::Time(0) : latest_time));
+                    }
+                    catch (tf2::TransformException &ex){
+                        ROS_WARN("%s",ex.what());
+                    }
+
+                    // return static_layers_handler[index]->transform_to_baselink(geo_transform);
+                    static_layers_handler[i]->transform_to_baselink(geo_transform);
+                    
+                    cv::Mat input_temp = cv::Mat(temp_stack);
+                    static_layers_handler[i]->get_transformed_input(input_temp);
+                    cv::max(temp_stack, input_temp, temp_stack); 
+                }
+            }
+        }
     }
     
     void StackGridNode::thresholdStack(cv::Mat &input_stack, float threshold_value){
-        cv::inRange(input_stack, 0, threshold_value, threshold_mask);
+        cv::inRange(input_stack, 1, threshold_value, threshold_mask);
 
-        input_stack.setTo(0, threshold_mask);
-        input_stack.setTo(-1, threshold_stack < 0);
-        input_stack.setTo(100, threshold_stack > threshold_occupancy+1);
+        input_stack.setTo(1, threshold_mask);
+        input_stack.setTo(0, threshold_stack < 1);
+        input_stack.setTo(101, threshold_stack > threshold_occupancy+1);
     }
     
     void StackGridNode::inflateLayer(cv::Mat &main_stack, cv::Mat &gaussian_kernel, cv::Mat &dilation_kernel){
@@ -276,7 +277,7 @@ namespace stack_grid_bugcar{
         cv::filter2D(obstacle_mask, obstacle_mask, -1.0, gaussian_kernel, cv::Point(-1,-1));
         //main_stack.setTo(-1, main_stack < 0);
         
-        obstacle_mask.convertTo(obstacle_mask, CV_8SC1);
+        obstacle_mask.convertTo(obstacle_mask, main_stack.type());
         cv::max(main_stack, obstacle_mask, main_stack);
         //imshowOccupancyGrid("inflate", main_stack);
     }
@@ -290,17 +291,17 @@ namespace stack_grid_bugcar{
         grid_.header.frame_id = robot_frame;
         grid_.header.stamp = ros::Time::now();
 
-        grid_.info.origin.position.x = -width / 2;
-        grid_.info.origin.position.y = -height / 2;
+        grid_.info.origin.position.x = -height / 2.0;
+        grid_.info.origin.position.y = -width / 2.0;
         grid_.info.origin.orientation.w = 1;
         grid_.info.map_load_time = ros::Time::now();
 
-        grid_.info.width = width / resolution;
-        grid_.info.height = height / resolution;
+        grid_.info.width = size_x;
+        grid_.info.height = size_y;
         grid_.info.resolution = resolution;
-        grid_.data.resize((width/resolution)*(height/resolution));
         
         if(!main_stack.isContinuous()){
+            ROS_INFO_STREAM("Discontinuous");
             main_stack.clone();
         }
         grid_.data.assign(main_stack.datastart, main_stack.dataend);
