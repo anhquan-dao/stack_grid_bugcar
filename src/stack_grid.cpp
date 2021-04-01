@@ -5,10 +5,10 @@
 int main(int argc, char **argv){
     ros::init(argc, argv, "stack_grid");
     
-    stack_grid_bugcar::StackGridNode stack_node;
+    stack_grid_bugcar::StackGridBase stack_node;
+    stack_node.initialize();
+    stack_node.initLayerHandler();
     stack_node.initMat();
-
-    ROS_INFO_STREAM("END");
 
     stack_node.run();
 

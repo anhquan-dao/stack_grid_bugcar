@@ -3,14 +3,8 @@
 #include <stack_grid_bugcar/stack_grid_node.h>
 
 namespace stack_grid_bugcar{
-    StackGridNode::StackGridNode(){
-
-        /*
-        *   Initialize as independent node
-        */
+    void StackGridBase::initialize(){
         ros::NodeHandle nh("~/");
-
-        ROS_INFO_STREAM(nh.getNamespace());
 
         ROS_INFO_STREAM("Initialize stack grid node");
         nh.param("global_frame", global_frame_, std::string("map"));
@@ -38,10 +32,10 @@ namespace stack_grid_bugcar{
         grid_.data.resize(size_y*size_x);
 
         nh.param("update_frequency", update_frequency, 10.0);
-        cycle_in_millis = 1000*(1/update_frequency);
         nh.param("publish_frequency", publish_frequency, 10.0);
 
         nh.param("threshold_occupancy", threshold_occupancy, 50);
+        nh.param("stack_policy", stack_policy, NO_MAP);
 
         ROS_INFO_STREAM("Global frame: " << global_frame_);
         ROS_INFO_STREAM("Robot frame: " << robot_frame);
@@ -51,7 +45,13 @@ namespace stack_grid_bugcar{
         *   Initialize similar to being costmap_2d plugin
         */
 
-        publisher = nh.advertise<nav_msgs::OccupancyGrid>(nh.getNamespace() + "/map", 1);
+        publisher = nh.advertise<nav_msgs::OccupancyGrid>("map", 1);
+
+        
+    }
+
+    void StackGridBase::initLayerHandler(){
+        ros::NodeHandle nh("~/");
 
         std::string source_strings;
         nh.getParam("static_sources", source_strings); 
@@ -89,28 +89,28 @@ namespace stack_grid_bugcar{
                                 global_frame_, msg_type, topic)
             ));
 
-            async_map_process.push_back(std::shared_ptr<std::future<int>>(
-                new std::future<int>));
+            // async_map_process.push_back(std::shared_ptr<std::future<int>>(
+            //     new std::future<int>));
 
             static_layers_handler.back()->update_stack_size(size_x, size_y);
             static_layers_handler.back()->update_stack_resolution(resolution);
         }
-        ROS_INFO_STREAM("HELLO");
     }
 
-    void StackGridNode::initMat(){
-        stack = cv::Mat(cv::Size(size_x, size_y), CV_8UC1);
+    void StackGridBase::initMat(){
+        stack = cv::Mat(cv::Size(size_x, size_y), CV_32FC1);
         stack = 0;
 
-        temp_stack = cv::Mat(cv::Size(size_x, size_y), CV_8UC1);
+        temp_stack = cv::Mat(cv::Size(size_x, size_y), CV_32FC1);
         temp_stack = 0;
 
         publish_stack = cv::Mat(cv::Size(size_x, size_y), CV_8SC1, -1);
-        // unknown_mask = cv::Mat(cv::Size(size_x, size_y), CV_8SC1);
-        
-        
+        threshold_stack = cv::Mat(stack);
+         
         T_center_shift.at<float>(0,2) = -size_x / 2.0;
         T_center_shift.at<float>(1,2) = -size_y / 2.0;
+
+        // std::cout << T_center_shift << std::endl;
 
         gaussian_kernel = cv::getGaussianKernel((inflation_rad/resolution)*2+1,0.0, CV_32FC1);
         gaussian_kernel = gaussian_kernel * gaussian_kernel.t();
@@ -121,19 +121,18 @@ namespace stack_grid_bugcar{
                       cv::Point(-1,-1));
     }
     
-    void StackGridNode::run(){
+    void StackGridBase::run(){
         //async_publisher = std::async(std::launch::async, []{return true;});
         while(ros::ok()){
             ros::Rate r_(update_frequency);
 
-            getTransformToCurrent();
-            shiftToCurrentFrame(stack, T_time_shift);
+            
 
             //async_publisher.wait_for(std::chrono::seconds(1));
 
-            simpleStack(stack, threshold_stack, MAX_TEMP, AVG_STACK);
+            simpleStack(stack, stack, MAX_TEMP, stack_policy);
             
-            threshold_stack.copyTo(stack);
+            stack.convertTo(threshold_stack, threshold_stack.type());
 
             thresholdStack(threshold_stack, threshold_occupancy);
 
@@ -145,8 +144,8 @@ namespace stack_grid_bugcar{
             publish_stack -= 1;
             publishStack(publish_stack);
 
-            imshowOccupancyGrid("Output stack", publish_stack);
-            //async_publisher = std::async(std::launch::async, [this]{return publishStack(threshold_stack);});
+            // imshowOccupancyGrid("Output stack", publish_stack);
+            // async_publisher = std::async(std::launch::async, [this]{return publishStack(threshold_stack);});
 
             r_.sleep();
             //ROS_INFO_STREAM_THROTTLE(1, "Stack grid is running at " << measured_ns << " Hz");
@@ -156,7 +155,7 @@ namespace stack_grid_bugcar{
         }
     }
     
-    void StackGridNode::getTransformToCurrent(){
+    void StackGridBase::getTransformToCurrent(){
         try{
             current_global_baselink_tf = tfBuffer.lookupTransform(robot_frame, global_frame_, ros::Time(0));
         }
@@ -168,21 +167,34 @@ namespace stack_grid_bugcar{
                             current_global_baselink_tf.transform.rotation.w) * 2;
 
         T_global_baselink_current.at<float>(0,0) = cos(angle);
-        T_global_baselink_current.at<float>(1,1) = T_global_baselink_current.at<float>(0,0);
+        T_global_baselink_current.at<float>(1,1) = cos(angle);
         T_global_baselink_current.at<float>(1,0) = sin(angle);
-        T_global_baselink_current.at<float>(0,1) = -T_global_baselink_current.at<float>(1,0);
+        T_global_baselink_current.at<float>(0,1) = -sin(angle);
         T_global_baselink_current.at<float>(0,2) = current_global_baselink_tf.transform.translation.x / resolution;
         T_global_baselink_current.at<float>(1,2) = current_global_baselink_tf.transform.translation.y / resolution;
         
+        // std::cout << current_global_baselink_tf << std::endl;
         T_time_shift = T_global_baselink_current * T_global_baselink_old.inv();
+        
+        // std::cout << T_global_baselink_old << std::endl;
+        // std::cout << T_time_shift << std::endl;
 
-        T_time_shift = (T_center_shift.inv() * T_time_shift) * T_center_shift;
+        T_time_shift = T_center_shift.inv() * (T_time_shift * T_center_shift);
+        // T_time_shift = T_time_shift;
 
+        // std::cout << T_time_shift << std::endl;
         T_global_baselink_current.copyTo(T_global_baselink_old);
        
     }
 
-    int StackGridNode::processInputLayer(int index){
+    void StackGridBase::shiftToCurrentFrame(cv::Mat &main_stack, cv::Mat T_shift){
+        // std::cout << T_shift(cv::Range(0,2), cv::Range(0,3)) << std::endl;
+        cv::warpAffine(main_stack, main_stack, T_shift(cv::Range(0,2), cv::Range(0,3)), stack.size(),
+                       cv::INTER_NEAREST, cv::BORDER_CONSTANT, 0.0);
+    }
+
+
+    int StackGridBase::processInputLayer(int index){
         ros::Time latest_time = static_layers_handler[index]->getLatestTime();
         geometry_msgs::TransformStamped geo_transform;
         try{
@@ -190,54 +202,49 @@ namespace stack_grid_bugcar{
                             (latest_time.toSec() > ros::Time(0).toSec() ? ros::Time(0) : latest_time));
         }
         catch (tf2::TransformException &ex){
-            ROS_WARN("%s",ex.what());
+            ROS_WARN_STREAM_THROTTLE(1, static_layers_handler[index]->get_name() << ": " << ex.what());
         }
 
         return static_layers_handler[index]->transform_to_baselink(geo_transform);
     }
     
-    void StackGridNode::simpleStack(cv::Mat &prev_stack, cv::Mat &output_stack, int temp_policy, int main_policy){
+    void StackGridBase::simpleStack(cv::Mat &prev_stack, cv::Mat &output_stack, int temp_policy, int main_policy){
         getTemporalStack(temp_policy);
+        
+        
+        if(main_policy == NO_MAP){
+            ROS_INFO_STREAM("YO");
+            temp_stack.copyTo(output_stack);
+        } else{
+            getTransformToCurrent();
+            shiftToCurrentFrame(stack, T_time_shift);
 
-        // imshowOccupancyGrid("temp stack",temp_stack); 
-        // ROS_INFO_STREAM("temp_stack" << temp_stack.type());
-
+            switch(main_policy){
+                case AVG_STACK:
+                    prev_stack.copyTo(temp_stack, temp_stack == 0);
+                    cv::addWeighted(temp_stack, 1.0, prev_stack, 0.0, 0.0, output_stack);
+                    break;
+            }
+        }
         
-        // temp_stack.setTo(10, temp_stack == 0);
-        
-        //ROS_INFO_STREAM("Stacking");
-        // temp_stack *= 1.0;
-        // temp_stack += prev_stack * 0.0;
-        
-        //ROS_INFO_STREAM("Adding temp stack");
-        
-        //ROS_INFO_STREAM("Averaging");
-
-        temp_stack.convertTo(output_stack, CV_8UC1);
-        // imshowOccupancyGrid("output stack", output_stack);
         
     }
 
-    void StackGridNode::getTemporalStack(int policy){
+    void StackGridBase::getTemporalStack(int policy){
         if(temp_stack.size() != cv::Size(size_x, size_y)){
-            temp_stack = cv::Mat(cv::Size(size_x, size_y), CV_8UC1, 0);
+            temp_stack = cv::Mat(cv::Size(size_x, size_y), temp_stack.type(), 0);
         }
         temp_stack = 0;
 
-        // for(int i =  0; i < static_layers_handler.size(); ++i){
-        //     *async_map_process[i] = std::async(&StackGridNode::processInputLayer, this, i );
-        // }
-        // while(!std::all_of(async_map_process.begin(), async_map_process.end(),
-        //     [](auto f){return f->wait_for(std::chrono::seconds(1)) == std::future_status::ready;})){
-            
-        //     std::this_thread::yield();
-        // }
+        geometry_msgs::TransformStamped geo_transform;
+        cv::Mat input_temp;
+        temp_stack.convertTo(input_temp, temp_stack.type());
 
         if(policy == MAX_TEMP){
             for(int i =  0; i < static_layers_handler.size(); ++i){
                 if(!static_layers_handler[i]->input_is_empty()){  
                     ros::Time latest_time = static_layers_handler[i]->getLatestTime();
-                    geometry_msgs::TransformStamped geo_transform;
+                    
                     try{
                         geo_transform = tfBuffer.lookupTransform(static_layers_handler[i]->get_frame_id(), robot_frame,
                                         (latest_time.toSec() > ros::Time(0).toSec() ? ros::Time(0) : latest_time));
@@ -246,18 +253,20 @@ namespace stack_grid_bugcar{
                         ROS_WARN("%s",ex.what());
                     }
 
+                    // ROS_INFO_STREAM(geo_transform);
                     // return static_layers_handler[index]->transform_to_baselink(geo_transform);
                     static_layers_handler[i]->transform_to_baselink(geo_transform);
-                    
-                    cv::Mat input_temp = cv::Mat(temp_stack);
+
                     static_layers_handler[i]->get_transformed_input(input_temp);
+                    // imshowOccupancyGrid("input", input_temp);
                     cv::max(temp_stack, input_temp, temp_stack); 
                 }
             }
         }
+        // imshowOccupancyGrid("fadsfas",input_temp);
     }
     
-    void StackGridNode::thresholdStack(cv::Mat &input_stack, float threshold_value){
+    void StackGridBase::thresholdStack(cv::Mat &input_stack, float threshold_value){
         cv::inRange(input_stack, 1, threshold_value, threshold_mask);
 
         input_stack.setTo(1, threshold_mask);
@@ -265,7 +274,7 @@ namespace stack_grid_bugcar{
         input_stack.setTo(101, threshold_stack > threshold_occupancy+1);
     }
     
-    void StackGridNode::inflateLayer(cv::Mat &main_stack, cv::Mat &gaussian_kernel, cv::Mat &dilation_kernel){
+    void StackGridBase::inflateLayer(cv::Mat &main_stack, cv::Mat &gaussian_kernel, cv::Mat &dilation_kernel){
         
         cv::Mat obstacle_mask;
         main_stack.convertTo(obstacle_mask, CV_32FC1);
@@ -282,12 +291,8 @@ namespace stack_grid_bugcar{
         //imshowOccupancyGrid("inflate", main_stack);
     }
 
-    void StackGridNode::shiftToCurrentFrame(cv::Mat &main_stack, cv::Mat T_shift){
-        cv::warpAffine(main_stack, main_stack, T_time_shift(cv::Range(0,2), cv::Range(0,3)), stack.size(),
-                        cv::INTER_NEAREST, cv::BORDER_CONSTANT, -1);
-    }
-
-    bool StackGridNode::publishStack(cv::Mat &main_stack){
+    bool StackGridBase::publishStack(cv::Mat &main_stack){
+       
         grid_.header.frame_id = robot_frame;
         grid_.header.stamp = ros::Time::now();
 

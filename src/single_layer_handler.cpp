@@ -55,34 +55,55 @@ namespace stack_grid_bugcar{
         }
 
         T_layer = cv::Mat::eye(cv::Size(3,3),CV_32FC1);
-        float angle = atan2(layer_origin.pose.orientation.z, layer_origin.pose.orientation.w);
-        T_layer.at<float>(0,0) = cos(angle*2);
-        T_layer.at<float>(1,1) = T_layer.at<float>(0,0);
-        T_layer.at<float>(1,0) = sin(angle*2);
-        T_layer.at<float>(0,1) = -T_layer.at<float>(1,0);
-        T_layer.at<float>(0,2) =  stack_dim.width * stack_resolution / 2 + layer_origin.pose.position.x;
-        T_layer.at<float>(1,2) =  stack_dim.height * stack_resolution / 2 + layer_origin.pose.position.y;
+        float angle = atan2(layer_origin.pose.orientation.z, layer_origin.pose.orientation.w) * 2;
+        T_layer.at<float>(0,0) = cos(angle);
+        T_layer.at<float>(1,1) = cos(angle);
+        T_layer.at<float>(1,0) = -sin(angle);
+        T_layer.at<float>(0,1) = sin(angle);
+        T_layer.at<float>(0,2) =  stack_dim.width / 2 
+                                + layer_origin.pose.position.x / stack_resolution;
+        T_layer.at<float>(1,2) =  stack_dim.height / 2 
+                                + layer_origin.pose.position.y / stack_resolution;
+
+        cv::Mat T_3d_rotation;
+        cv::Point center = cv::Point(stack_dim.width/2, stack_dim.height/2);
+        angle = atan2(tf_3d_msg.transform.rotation.z, tf_3d_msg.transform.rotation.w) * 2;
+        cv::getRotationMatrix2D(center, angle * 180 / M_PI, 1).convertTo(T_3d_rotation, CV_32FC1);
 
         cv::Mat T_3d_mat = cv::Mat::eye(cv::Size(3,3),CV_32FC1);
-        angle = atan2( tf_3d_msg.transform.rotation.z, tf_3d_msg.transform.rotation.w);
-        T_3d_mat.at<float>(0,0) = cos(angle*2);
-        T_3d_mat.at<float>(1,1) = T_3d_mat.at<float>(0,0);
-        T_3d_mat.at<float>(1,0) = sin(angle*2);
-        T_3d_mat.at<float>(0,1) = -T_3d_mat.at<float>(1,0);
-        T_3d_mat.at<float>(0,2) = tf_3d_msg.transform.translation.x;
-        T_3d_mat.at<float>(1,2) = tf_3d_msg.transform.translation.y;
+        T_3d_mat.at<float>(0,0) = T_3d_rotation.at<float>(0,0);
+        T_3d_mat.at<float>(0,1) = T_3d_rotation.at<float>(0,1);
+        T_3d_mat.at<float>(0,2) = T_3d_rotation.at<float>(0,2);
+        T_3d_mat.at<float>(1,0) = T_3d_rotation.at<float>(1,0);
+        T_3d_mat.at<float>(1,1) = T_3d_rotation.at<float>(1,1);
+        T_3d_mat.at<float>(1,2) = T_3d_rotation.at<float>(1,2);
+
+        cv::Mat T_3d_trans = cv::Mat::eye(cv::Size(3,3),CV_32FC1);
+        T_3d_trans.at<float>(0,2) = -tf_3d_msg.transform.translation.x / stack_resolution;
+        T_3d_trans.at<float>(1,2) = -tf_3d_msg.transform.translation.y / stack_resolution;
+
+        
+        T_3d_mat *= T_3d_trans;
+        // ROS_INFO_STREAM(T_3d_mat);
+        // std::cout << "===================================" << std::endl;
+        // std::cout << (T_3d_rotation) << std::endl;
+        // std::cout << (T_layer) << std::endl;
+        
 
         T_layer = T_3d_mat * T_layer;
+        
 
         cv::Mat T_scaling = cv::Mat::eye(cv::Size(3,3), CV_32FC1);
         T_scaling.at<float>(0,0) *= layer_resolution/stack_resolution;
         T_scaling.at<float>(1,1) *= layer_resolution/stack_resolution;
 
         T_layer *= T_scaling;
-
+        
         cv::Mat tf_2d_mat_2x3 = T_layer(cv::Range(0,2),cv::Range(0,3));
-        tf_2d_mat_2x3.at<float>(0,2) /= stack_resolution;
-        tf_2d_mat_2x3.at<float>(1,2) /= stack_resolution;
+        // tf_2d_mat_2x3.at<float>(0,2) /= stack_resolution;
+        // tf_2d_mat_2x3.at<float>(1,2) /= stack_resolution;
+
+        // std::cout << (tf_2d_mat_2x3) << std::endl;
          
         raw_data_buffer.convertTo(data_img_8u, CV_8UC1);
         // ROS_INFO_STREAM("data_img_8u: " << data_img_8u.type() << " " << &data_img_8u);

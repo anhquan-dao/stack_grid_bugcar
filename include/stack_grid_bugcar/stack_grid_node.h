@@ -16,9 +16,6 @@
 
 #include <cmath>
 #include <algorithm>
-#include <memory>
-#include <future>
-#include <thread>
 #include <mutex>
 #include <eigen3/Eigen/Dense>
 #include <opencv2/opencv.hpp>
@@ -28,16 +25,28 @@
 namespace stack_grid_bugcar{
 
     /** Temporal stack maximum policy */
-    static int MAX_TEMP = 0;
+    static const int MAX_TEMP = 0;
 
     /** Main mapping/stacking policy */
-    static int AVG_STACK = 0;
+    static const int NO_MAP = -1;
+    static const int AVG_STACK = 0;
 
 
-    class StackGridNode{
+    class StackGridBase{
         public:
-            StackGridNode();
-            ~StackGridNode(){}
+            StackGridBase(){};
+            ~StackGridBase(){}
+            
+
+           /**
+            * @brief Intialization
+            */ 
+            virtual void initialize();
+
+           /**
+            * @brief Initialize layer handlers
+            */  
+            void initLayerHandler();
 
            /**
             * @brief Initialize all the necessary matrices after class construction
@@ -91,17 +100,12 @@ namespace stack_grid_bugcar{
             void imshowOccupancyGrid(std::string name, const cv::Mat &og_mat){
                 cv::Mat img;
                 og_mat.convertTo(img, CV_8UC1);
-                if(og_mat.type() == CV_8SC1 || CV_32FC1){
-                    img.setTo(255, og_mat == 0);
-                    
-                } else if(og_mat.type() == CV_8UC1){
-                    img.setTo(255, og_mat == 1);
-                }
+                img.setTo(255, og_mat == 1);
                 cv::imshow(name, img);
                 cv::waitKey(1);
             }
 
-        private:
+        protected:
            /**
             * @brief Get transform matrix of old pose in latest frame
             */
@@ -113,8 +117,7 @@ namespace stack_grid_bugcar{
             std::string global_frame_;
             std::string robot_frame;
             geometry_msgs::TransformStamped current_global_baselink_tf;
-            geometry_msgs::TransformStamped old_global_baselink_tf;
-
+            
             /** Main stack to stack all inputs against*/
             cv::Mat stack;
             cv::Mat threshold_stack;
@@ -125,10 +128,6 @@ namespace stack_grid_bugcar{
             ///@{
             /** Temporal stack to hold input layers for later operation */
             cv::Mat temp_stack;
-            /** Mask of inflated region */
-            cv::Mat inflation_mask;
-            /** Mask of unknown region */
-            cv::Mat unknown_mask;
             /** Mask for thresholding main stack */
             cv::Mat threshold_mask;
             /** Used for publishing */
@@ -152,14 +151,15 @@ namespace stack_grid_bugcar{
             cv::Mat T_center_shift{cv::Mat::eye(cv::Size(3,3), CV_32FC1)};
 
             double update_frequency;
-            int32_t cycle_in_millis;
             double publish_frequency;
 
-            int32_t size_x; // Unit: pixel
-            int32_t size_y;
-            int32_t width; // Unit: meter
-            int32_t height;
+            cv::Size stack_dim = cv::Size(0,0);
+            int &size_x = stack_dim.width; // Unit: pixel
+            int &size_y = stack_dim.height;
+            int width; // Unit: meter
+            int height;
             double resolution; // Unit: meter/pixel
+            int stack_policy;
 
             bool track_unknown_;
             int default_value;
@@ -170,16 +170,10 @@ namespace stack_grid_bugcar{
             geometry_msgs::PoseStamped stack_origin;
 
             std::vector<std::shared_ptr<LayerHandler>> static_layers_handler;
-            std::vector<std::shared_ptr<std::future<int>>> async_map_process;
-
-            std::future<bool> async_publisher;
-   
-            std::mutex data_mutex;
 
             nav_msgs::OccupancyGrid grid_;
-
-            char *cost_lookup_table;
-
+            
+            std::mutex data_mutex;
     };
 }
 #endif
