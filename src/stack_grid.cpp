@@ -11,9 +11,9 @@ int main(int argc, char **argv){
     stack_node.initLayerHandler();
     stack_node.initMat();
 
-    // stack_node.run();
-    ros::Timer timer;
-    stack_node.setupTimer(timer);
+    stack_node.run();
+    // ros::Timer timer;
+    // stack_node.setupTimer(timer);
 
     ros::spin();
 

@@ -54,7 +54,6 @@ namespace stack_grid_bugcar{
         ros::NodeHandle nh;
         diagnostics.add("Custom Stack Grid status", this, &StackGridBase::updateDiag);
         diagnostics.setHardwareID("none");
-        diag_timer = nh.createTimer(ros::Duration(1), &StackGridBase::updateStatus, this);
 
         sensor_fail = nh.advertise<std_msgs::Bool>("sensor_fail", 1);
     }
@@ -154,12 +153,17 @@ namespace stack_grid_bugcar{
             threshold_stack.convertTo(publish_stack, CV_8SC1);
             publish_stack -= 1;
             publishStack(publish_stack);
+            
+            diagnostics.update();
 
             // imshowOccupancyGrid("Output stack", publish_stack);
             // async_publisher = std::async(std::launch::async, [this]{return publishStack(threshold_stack);});
 
+            
+
             r_.sleep();
-            ROS_INFO_STREAM_THROTTLE(1, "Stack grid is running at " << (1/r_.cycleTime().toSec()) << " Hz");
+            actual_run_rate = 1.0/r_.cycleTime().toSec();
+            ROS_INFO_STREAM_THROTTLE(1, "Stack grid is running at " << (actual_run_rate) << " Hz");
 
             ros::spinOnce();
             
@@ -180,6 +184,8 @@ namespace stack_grid_bugcar{
         threshold_stack.convertTo(publish_stack, CV_8SC1);
         publish_stack -= 1;
         publishStack(publish_stack);
+
+        diagnostics.update();
     }
 
     void StackGridBase::setupTimer(ros::Timer &timer){
@@ -369,18 +375,20 @@ namespace stack_grid_bugcar{
 
     void StackGridBase::updateDiag(diagnostic_updater::DiagnosticStatusWrapper& stat){
         std::lock_guard<std::mutex> lg(data_mutex);
-        
-        
-        stat.summary(diagnostic_msgs::DiagnosticStatus::OK, "OK");
-        
-        std::map<std::string, int>::iterator it;
-        bool sth_wrong = false;
 
+        stat.add("Actual rate (Hz): ", actual_run_rate);
+        stat.add("Desired rate (Hz): ", update_frequency);
+        
+        sensor_fail_check.data = false;
+        bool layer_err = false;
+
+        std::map<std::string, int>::iterator it;
+       
         for(it = layer_diagnostics.begin(); it != layer_diagnostics.end(); it++){
             if(it->second == 0){
                 stat.add(it->first, "OK");
             } else{
-                sth_wrong = true;
+                layer_err = true;
                 switch(it->second){
                     case StackGridBase::LAYER_LATE_UPDATE:
                         stat.add(it->first, "Layer has not been published or updated for some time");
@@ -394,12 +402,15 @@ namespace stack_grid_bugcar{
                 }
             }
         }
-        if(sth_wrong == false){
-            sensor_fail_check.data = false;
-            stat.summary(diagnostic_msgs::DiagnosticStatus::OK, "OK");
-        } else{
+        
+
+        if(layer_err == true){
             sensor_fail_check.data = true;
             stat.summary(diagnostic_msgs::DiagnosticStatus::ERROR, "One or more layers are having errors");
+        } else if(actual_run_rate < update_frequency){
+            stat.summary(diagnostic_msgs::DiagnosticStatus::WARN, "Can not achieve desired operatioon rate");
+        } else{
+            stat.summary(diagnostic_msgs::DiagnosticStatus::OK, "OK");
         }
         sensor_fail.publish(sensor_fail_check);
     }
