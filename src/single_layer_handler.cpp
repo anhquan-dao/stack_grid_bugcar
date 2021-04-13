@@ -40,17 +40,17 @@ namespace stack_grid_bugcar{
         // raw_data_buffer.copyTo(data_img);
         // data_img += 1;
 
-        if(raw_data_buffer.empty()){
-            ROS_WARN_STREAM("Input for " + obj_name + " has not been published, topic: " + sub_topic);
-            return 3;
-        }
-        if(raw_data_buffer.rows == 0 || raw_data_buffer.cols == 0){
-            ROS_WARN_STREAM("Input for " + obj_name + " is empty, topic: " + sub_topic);
-            return 2;
-        }
+        // if(raw_data_buffer.empty()){
+        //     ROS_WARN_STREAM("Input for " + obj_name + " has not been published, topic: " + sub_topic);
+        //     return 3;
+        // }
+        // if(raw_data_buffer.rows == 0 || raw_data_buffer.cols == 0){
+        //     ROS_WARN_STREAM("Input for " + obj_name + " is empty, topic: " + sub_topic);
+        //     return 2;
+        // }
         if(abs(last_callback_time.toSec() - ros::Time::now().toSec()) > 2){
-            ROS_WARN_STREAM("Input for " + obj_name + " has not been updated for " <<
-                     abs(last_callback_time.toSec() - ros::Time::now().toSec()) << ", topic: " + sub_topic);
+            // ROS_WARN_STREAM("Input for " + obj_name + " has not been updated for " <<
+            //          abs(last_callback_time.toSec() - ros::Time::now().toSec()) << ", topic: " + sub_topic);
             return 1;
         }
 
@@ -88,11 +88,9 @@ namespace stack_grid_bugcar{
         // std::cout << "===================================" << std::endl;
         // std::cout << (T_3d_rotation) << std::endl;
         // std::cout << (T_layer) << std::endl;
-        
 
         T_layer = T_3d_mat * T_layer;
         
-
         cv::Mat T_scaling = cv::Mat::eye(cv::Size(3,3), CV_32FC1);
         T_scaling.at<float>(0,0) *= layer_resolution/stack_resolution;
         T_scaling.at<float>(1,1) *= layer_resolution/stack_resolution;

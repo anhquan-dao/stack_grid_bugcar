@@ -11,10 +11,14 @@
 #include <geometry_msgs/PointStamped.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <std_msgs/String.h>
+#include <std_msgs/Bool.h>
 #include <tf/transform_listener.h>
 #include <tf2_ros/transform_listener.h>
 
+#include <diagnostic_updater/diagnostic_updater.h>
+
 #include <cmath>
+#include <map>
 #include <algorithm>
 #include <mutex>
 #include <eigen3/Eigen/Dense>
@@ -34,7 +38,7 @@ namespace stack_grid_bugcar{
 
     class StackGridBase{
         public:
-            StackGridBase(){};
+            StackGridBase(){}
             ~StackGridBase(){}
             
 
@@ -53,7 +57,12 @@ namespace stack_grid_bugcar{
             */
             void initMat();
 
+            void initDiagnostics();
+
             void run();
+
+            void run_withTimer(const ros::TimerEvent& event);
+            void setupTimer(ros::Timer &timer);
       
         protected:
            /**
@@ -103,6 +112,12 @@ namespace stack_grid_bugcar{
                 img.setTo(255, og_mat == 1);
                 cv::imshow(name, img);
                 cv::waitKey(1);
+            }
+
+            void updateDiag(diagnostic_updater::DiagnosticStatusWrapper& stat);
+
+            void updateStatus(const ros::TimerEvent&){
+                diagnostics.update();
             }
 
         protected:
@@ -174,6 +189,22 @@ namespace stack_grid_bugcar{
             nav_msgs::OccupancyGrid grid_;
             
             std::mutex data_mutex;
+
+            diagnostic_updater::Updater diagnostics;
+            std::map<std::string, int> layer_diagnostics;
+            ros::Timer diag_timer;
+
+            ros::Publisher sensor_fail;
+            std_msgs::Bool sensor_fail_check;
+
+           /**
+            * @brief Error code
+            */
+            enum{
+                LAYER_NO_TF = 3,
+                LAYER_EMPTY_BUFFER = 1,
+                LAYER_LATE_UPDATE = 2,
+            };
     };
 }
 #endif

@@ -7,10 +7,15 @@ int main(int argc, char **argv){
     
     stack_grid_bugcar::StackGridBase stack_node;
     stack_node.initialize();
+    stack_node.initDiagnostics();
     stack_node.initLayerHandler();
     stack_node.initMat();
 
-    stack_node.run();
+    // stack_node.run();
+    ros::Timer timer;
+    stack_node.setupTimer(timer);
+
+    ros::spin();
 
     return 0;
 }
