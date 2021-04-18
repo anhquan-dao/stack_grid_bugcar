@@ -25,6 +25,8 @@ StackGrid::~StackGrid(){
 void StackGrid::onInitialize(){
     ros::NodeHandle nh("~/" + name_);
 
+    initDiagnostics();
+
     current_ = true;    
 
     nh.param("fixed_frame", global_frame_, std::string("map"));
@@ -74,6 +76,8 @@ void StackGrid::onInitialize(){
 
         static_layers_handler.back()->update_stack_size(size_x, size_y);
         static_layers_handler.back()->update_stack_resolution(resolution);
+
+        layer_diagnostics.insert({source, 0});
     }
 
     cost_lookup_table = new char [102];
@@ -84,6 +88,8 @@ void StackGrid::onInitialize(){
     for(int i = 1; i < 99; i++){
         cost_lookup_table[i] = char(1 + (251 * (i - 1)) / 97);
     }
+
+    initDiagnostics();
     
 }   
 
@@ -112,25 +118,30 @@ void StackGrid::reconfigureCB(costmap_2d::GenericPluginConfig &config, uint32_t 
 void StackGrid::updateBounds(double robot_x, double robot_y, double robot_yaw, double* min_x,
                                             double* min_y, double* max_x, double* max_y){
     
-    auto start = std::chrono::high_resolution_clock::now();
+    
+    double angle = atan2(size_x_, size_y_);
     double len = sqrt(pow(size_x_*resolution_,2)+pow(size_y_*resolution_,2));
-    double dx = (len/2.0)*cos(M_PI/4);
-    double dy = (len/2.0)*sin(M_PI/4);
-    *max_x = robot_x + dx;
-    *max_y = robot_y + dy;
-    *min_x = robot_x - dx;
-    *min_y = robot_y - dy;
+    double dx = (len/2.0)*sin(angle);
+    double dy = (len/2.0)*cos(angle);
+    *max_x = robot_x + dx + 1;
+    *max_y = robot_y + dy + 1;
+    *min_x = robot_x - dx + 1;
+    *min_y = robot_y - dy + 1;
 
+    std::cout << "YOYOYOYYO" << std::endl;
+    std::cout << robot_x << " " << robot_y << std::endl;
+    std::cout << dx << " " << dy << std::endl;
     origin_x_ = layered_costmap_->getCostmap()->getOriginX();
-    origin_y_ = layered_costmap_->getCostmap()->getOriginY();
+    origin_y_ = layered_costmap_->getCostmap()->getOriginY();   
+}
 
+void StackGrid::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i,
+                              int max_j){
+    auto start = std::chrono::high_resolution_clock::now();
     resetMaps();
 
-    simpleStack(stack, stack, MAX_TEMP, stack_policy);
-            
+    simpleStack(stack, stack, MAX_TEMP, stack_policy);     
     stack.copyTo(threshold_stack);
-
-
     thresholdStack(threshold_stack, threshold_occupancy);
 
     if(inflation_enable){
@@ -139,69 +150,31 @@ void StackGrid::updateBounds(double robot_x, double robot_y, double robot_yaw, d
 
     threshold_stack.convertTo(publish_stack, CV_8SC1);
     publish_stack -= 1;
-    // publishStack(publish_stack);
 
-    // imshowOccupancyGrid("Output stack", publish_stack);
-
-    /*
-    
-    main_map_img = cv::Mat(size_x_,size_y_, CV_32FC1,(float)DEFAULT_OCCUPANCY_VALUE);
-    
-    for(int i =  0; i < static_layers_handler.size(); ++i){
-        *async_map_process[i] = std::async(std::launch::async,&StackGrid::processMap, this, i );
-    }
-    while(!std::all_of(async_map_process.begin(), async_map_process.end(),
-        [](auto f){return f->wait_for(std::chrono::seconds(0)) == std::future_status::ready;})){
-        
-        std::this_thread::yield();
-    }
-    
-    for(int i =  0; i < static_layers_handler.size(); ++i){
-        cv::max(main_map_img, *layer_mat[i], main_map_img);
-        
-    }
-
-    main_map_img.copyTo(obstacle_mask);
-    obstacle_mask.setTo(-1, obstacle_mask < 100);
-
-    cv::dilate(obstacle_mask, dilation_mask, dilation_kernel);
-    dilation_mask.setTo(99, dilation_mask == 100);
-    
-    cv::filter2D(dilation_mask, inflation_mask, -1.0, gaussian_kernel, cv::Point(-1,-1));
-    inflation_mask.setTo(-1, inflation_mask < 1.0);
-
-    cv::max(main_map_img, inflation_mask, main_map_img);
-    cv::max(main_map_img, dilation_mask, main_map_img);
-
-    */
-    auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<int64_t, std::nano> dur_ns = (end - start);
-    double measured_ns = dur_ns.count();
-    measured_ns /= 1000000000;
-    ROS_INFO_STREAM_THROTTLE(1, "Stack grid plugin running at " << 1.0/measured_ns);
-    
-}
-
-void StackGrid::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i,
-                              int max_j){
-    
-    unsigned char *master_costmap_ = master_grid.getCharMap();
-    
     if(!publish_stack.isContinuous()){
         publish_stack = publish_stack.clone();
     }
+
+    unsigned char *master_costmap_ = master_grid.getCharMap();
+    
     //std::cout << main_map_img << std::endl;
     std::transform(publish_stack.datastart, publish_stack.dataend, master_costmap_, master_costmap_,
     boost::bind(&StackGrid::updateCharMap,this,_1,_2)); 
+
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<int64_t, std::nano> dur_ns = (end - start);
+    double measured_ns = dur_ns.count();
+    actual_run_rate = 1.0/ (measured_ns / 1000000000); 
+    diagnostics.update();
       
 }
 
 uint8_t StackGrid::updateCharMap(const int8_t img_cell, uint8_t master_cell){
     uint8_t cost = translateOccupancyToCost(img_cell);
-    if(master_cell == 255){
+    if(master_cell == 255)
         return cost;
-    }
-    return std::max(master_cell,cost);
+
+    return std::max(cost, master_cell);
 }
 
 uint8_t StackGrid::translateOccupancyToCost(int8_t occupancyValue){

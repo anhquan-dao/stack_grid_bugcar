@@ -171,6 +171,8 @@ namespace stack_grid_bugcar{
     }
 
     void StackGridBase::run_withTimer(const ros::TimerEvent& event){
+        auto start = std::chrono::high_resolution_clock::now();
+
         simpleStack(stack, stack, MAX_TEMP, stack_policy);
             
         stack.convertTo(threshold_stack, threshold_stack.type());
@@ -186,6 +188,12 @@ namespace stack_grid_bugcar{
         publishStack(publish_stack);
 
         diagnostics.update();
+
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<int64_t, std::nano> dur_ns = (end - start);
+        double measured_ns = dur_ns.count();
+        actual_run_rate = 1.0/ (measured_ns / 1000000000);
+        ROS_INFO_STREAM_THROTTLE(1, "Stack grid plugin running at " << actual_run_rate);
     }
 
     void StackGridBase::setupTimer(ros::Timer &timer){
