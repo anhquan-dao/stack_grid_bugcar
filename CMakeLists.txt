@@ -4,8 +4,6 @@ project(stack_grid_bugcar)
 
 add_compile_options(-std=c++17)
 
-
-
 find_package(catkin REQUIRED COMPONENTS
   std_msgs
   geometry_msgs
@@ -20,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf2
   tf2_geometry_msgs
   message_generation
+  bug_diagnostics
 )
 
 find_package(OpenCV REQUIRED COMPONENTS core imgproc highgui)

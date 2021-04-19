@@ -1,18 +1,23 @@
 stack_grid:
   global_frame: odom
   robot_base_frame: base_link
-
   resolution: 0.1
-  height: 100
-  width: 100
+  height: 30
+  width: 15
 
-  update_frequency: 100
+  update_frequency: 20
   publish_frequency: 10
 
   track_unknown: true
-  threshold_occupancy: 90
+  threshold_occupancy: 50
+  stack_policy: -1
   inflation_enable: false
   inflation_radius: 1
   inscribed_radius: 0.5
-  static_sources: dfasfsda
-  dfasfsda: {msg_type: OccupancyGrid, topic: map/image_segmentation, enable_publish: false}
+  static_sources: input1 input2 input3 input4 input5 fake
+  input1: {msg_type: OccupancyGrid, topic: /map/image_segmentation}
+  input2: {msg_type: OccupancyGrid, topic: /map/scan}
+  input3: {msg_type: OccupancyGrid, topic: /realsense_grid}
+  input4: {msg_type: OccupancyGrid, topic: /realsense_grid_back}
+  input5: {msg_type: OccupancyGrid, topic: /depth_scan}
+  fake: {msg_type: OccupancyGrid, topic: /map/abc}

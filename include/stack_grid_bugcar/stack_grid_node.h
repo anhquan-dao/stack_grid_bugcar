@@ -194,13 +194,15 @@ namespace stack_grid_bugcar{
             std::map<std::string, int> layer_diagnostics;
             ros::Timer diag_timer;
 
+            double actual_run_rate;
+
             ros::Publisher sensor_fail;
             std_msgs::Bool sensor_fail_check;
 
            /**
             * @brief Error code
             */
-            enum{
+            enum err_code{
                 LAYER_NO_TF = 3,
                 LAYER_EMPTY_BUFFER = 1,
                 LAYER_LATE_UPDATE = 2,

@@ -64,5 +64,11 @@
         "condition_variable": "cpp",
         "future": "cpp",
         "mutex": "cpp"
-    }
+    },
+    "python.autoComplete.extraPaths": [
+        "/home/quan/bugcar_simulation_ws/devel/lib/python2.7/dist-packages",
+        "/home/quan/bugcar/devel/lib/python2.7/dist-packages",
+        "/home/quan/ros_test_ws/devel/lib/python2.7/dist-packages",
+        "/opt/ros/melodic/lib/python2.7/dist-packages"
+    ]
 }
