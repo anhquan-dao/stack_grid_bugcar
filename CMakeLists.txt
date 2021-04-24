@@ -18,7 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf2
   tf2_geometry_msgs
   message_generation
-  bug_diagnostics
+  # bug_diagnostics
 )
 
 find_package(OpenCV REQUIRED COMPONENTS core imgproc highgui)

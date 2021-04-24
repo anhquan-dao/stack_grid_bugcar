@@ -1,12 +1,11 @@
 stack_grid:
-  global_frame: odom
+  global_frame: map
   robot_base_frame: base_link
-  resolution: 0.1
-  height: 30
-  width: 15
+  resolution: 0.15
+  height: 50
+  width: 50
 
-  update_frequency: 20
-  publish_frequency: 10
+  update_frequency: 10
 
   track_unknown: true
   threshold_occupancy: 50
@@ -17,7 +16,7 @@ stack_grid:
   static_sources: input1 input2 input3 input4 input5 fake
   input1: {msg_type: OccupancyGrid, topic: /map/image_segmentation}
   input2: {msg_type: OccupancyGrid, topic: /map/scan}
-  input3: {msg_type: OccupancyGrid, topic: /realsense_grid}
-  input4: {msg_type: OccupancyGrid, topic: /realsense_grid_back}
-  input5: {msg_type: OccupancyGrid, topic: /depth_scan}
-  fake: {msg_type: OccupancyGrid, topic: /map/abc}
+  input3: {msg_type: OccupancyGrid, topic: /map/rear_road_curb}
+  input4: {msg_type: OccupancyGrid, topic: /map/front_road_curb}
+  input5: {msg_type: OccupancyGrid, topic: /map/realsense_lidar}
+  # fake: {msg_type: OccupancyGrid, topic: /map/abc}

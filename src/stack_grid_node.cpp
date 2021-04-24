@@ -136,34 +136,9 @@ namespace stack_grid_bugcar{
         while(ros::ok()){
             r_.reset();
 
-            //async_publisher.wait_for(std::chrono::seconds(1));
-
-            simpleStack(stack, stack, MAX_TEMP, stack_policy);
-            
-            stack.convertTo(threshold_stack, threshold_stack.type());
-
-            threshold_stack.setTo(1, threshold_stack > 0.0);
-
-            // thresholdStack(threshold_stack, threshold_occupancy);
-
-            if(inflation_enable){
-                inflateLayer(threshold_stack, gaussian_kernel, dilation_kernel);
-            }
-
-            threshold_stack.convertTo(publish_stack, CV_8SC1);
-            publish_stack -= 1;
-            publishStack(publish_stack);
-            
-            diagnostics.update();
-
-            // imshowOccupancyGrid("Output stack", publish_stack);
-            // async_publisher = std::async(std::launch::async, [this]{return publishStack(threshold_stack);});
-
-            
+            baseOperation(stack, publish_stack, MAX_TEMP, stack_policy, inflation_enable, true, true);
 
             r_.sleep();
-            actual_run_rate = 1.0/r_.cycleTime().toSec();
-            ROS_INFO_STREAM_THROTTLE(1, "Stack grid is running at " << (actual_run_rate) << " Hz");
 
             ros::spinOnce();
             
@@ -171,29 +146,41 @@ namespace stack_grid_bugcar{
     }
 
     void StackGridBase::run_withTimer(const ros::TimerEvent& event){
+        baseOperation(stack, publish_stack, MAX_TEMP, stack_policy, inflation_enable, true, true);
+    }
+
+    void StackGridBase::baseOperation(cv::Mat &main_stack, cv::Mat &output_stack, int temp_policy, int stack_policy, bool inflation_enable, bool timing, bool publish_enable){
         auto start = std::chrono::high_resolution_clock::now();
 
-        simpleStack(stack, stack, MAX_TEMP, stack_policy);
+        simpleStack(main_stack, main_stack, temp_policy, stack_policy);
             
-        stack.convertTo(threshold_stack, threshold_stack.type());
+        main_stack.convertTo(threshold_stack, threshold_stack.type());
 
         thresholdStack(threshold_stack, threshold_occupancy);
 
-        if(inflation_enable){
+        if(inflation_enable)
             inflateLayer(threshold_stack, gaussian_kernel, dilation_kernel);
-        }
 
-        threshold_stack.convertTo(publish_stack, CV_8SC1);
-        publish_stack -= 1;
-        publishStack(publish_stack);
+        threshold_stack.convertTo(output_stack, CV_8SC1);
+        output_stack -= 1;
+
+        if(publish_enable)
+            publishStack(output_stack);
 
         diagnostics.update();
 
-        auto end = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<int64_t, std::nano> dur_ns = (end - start);
-        double measured_ns = dur_ns.count();
-        actual_run_rate = 1.0/ (measured_ns / 1000000000);
-        ROS_INFO_STREAM_THROTTLE(1, "Stack grid plugin running at " << actual_run_rate);
+        imshowOccupancyGrid("Output stack", output_stack);
+
+        if(timing){
+            auto end = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<int64_t, std::nano> dur_ns = (end - start);
+            double measured_ns = dur_ns.count();
+            actual_run_rate = 1.0/ (measured_ns / 1000000000);
+            if(actual_run_rate < update_frequency)
+                ROS_WARN_STREAM("Stack grid plugin running at " << actual_run_rate);
+        }
+       
+        
     }
 
     void StackGridBase::setupTimer(ros::Timer &timer){
@@ -422,4 +409,6 @@ namespace stack_grid_bugcar{
         }
         sensor_fail.publish(sensor_fail_check);
     }
+
+    
 }

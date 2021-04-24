@@ -62,6 +62,9 @@ namespace stack_grid_bugcar{
             void run();
 
             void run_withTimer(const ros::TimerEvent& event);
+            
+            void baseOperation(cv::Mat &main_stack, cv::Mat &output_stack, int temp_policy, int stack_policy, bool inflation_enable, bool timing, bool publish_enable);
+            
             void setupTimer(ros::Timer &timer);
       
         protected:
@@ -109,7 +112,7 @@ namespace stack_grid_bugcar{
             void imshowOccupancyGrid(std::string name, const cv::Mat &og_mat){
                 cv::Mat img;
                 og_mat.convertTo(img, CV_8UC1);
-                img.setTo(255, og_mat == 1);
+                img.setTo(255, og_mat == 0);
                 cv::imshow(name, img);
                 cv::waitKey(1);
             }

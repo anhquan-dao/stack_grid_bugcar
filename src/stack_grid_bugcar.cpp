@@ -90,6 +90,7 @@ void StackGrid::onInitialize(){
     }
 
     initDiagnostics();
+    publisher = nh.advertise<nav_msgs::OccupancyGrid>("map", 1);
     
 }   
 
@@ -128,28 +129,17 @@ void StackGrid::updateBounds(double robot_x, double robot_y, double robot_yaw, d
     *min_x = robot_x - dx + 1;
     *min_y = robot_y - dy + 1;
 
-    std::cout << "YOYOYOYYO" << std::endl;
-    std::cout << robot_x << " " << robot_y << std::endl;
-    std::cout << dx << " " << dy << std::endl;
     origin_x_ = layered_costmap_->getCostmap()->getOriginX();
     origin_y_ = layered_costmap_->getCostmap()->getOriginY();   
 }
 
 void StackGrid::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i,
                               int max_j){
-    auto start = std::chrono::high_resolution_clock::now();
+
     resetMaps();
 
-    simpleStack(stack, stack, MAX_TEMP, stack_policy);     
-    stack.copyTo(threshold_stack);
-    thresholdStack(threshold_stack, threshold_occupancy);
-
-    if(inflation_enable){
-        inflateLayer(threshold_stack, gaussian_kernel, dilation_kernel);
-    }
-
-    threshold_stack.convertTo(publish_stack, CV_8SC1);
-    publish_stack -= 1;
+    baseOperation(stack, publish_stack, MAX_TEMP, stack_policy, inflation_enable, true, true);
+    
 
     if(!publish_stack.isContinuous()){
         publish_stack = publish_stack.clone();
@@ -160,12 +150,6 @@ void StackGrid::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, int m
     //std::cout << main_map_img << std::endl;
     std::transform(publish_stack.datastart, publish_stack.dataend, master_costmap_, master_costmap_,
     boost::bind(&StackGrid::updateCharMap,this,_1,_2)); 
-
-    auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<int64_t, std::nano> dur_ns = (end - start);
-    double measured_ns = dur_ns.count();
-    actual_run_rate = 1.0/ (measured_ns / 1000000000); 
-    diagnostics.update();
       
 }
 
