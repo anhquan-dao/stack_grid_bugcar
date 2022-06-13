@@ -54,6 +54,8 @@ namespace stack_grid_bugcar
 
 		private_nh->param("threshold_occupancy", threshold_occupancy, 50);
 		private_nh->param("stack_policy", stack_policy, NO_MAP);
+		private_nh->param("temp_policy", temp_policy, WEIGHTED_TEMP);
+		private_nh->param("keep_danger", keep_danger, false);
 
 		ROS_INFO_STREAM("Global frame: " << global_frame_);
 		ROS_INFO_STREAM("Robot frame: " << robot_frame);
@@ -108,13 +110,16 @@ namespace stack_grid_bugcar
 			ros::NodeHandle source_node(*nh, source);
 
 			std::string msg_type, topic;
+			double weight;
+
 			bool enable_publish;
 			source_node.getParam("msg_type", msg_type);
 			source_node.getParam("topic", topic);
+			weight = source_node.param("weight", 1.0);
 
 			static_layers_handler.push_back(std::shared_ptr<LayerHandler>(
 				new LayerHandler(private_nh->getNamespace(), source,
-								 global_frame_, msg_type, topic)));
+								 global_frame_, msg_type, topic, weight)));
 
 			// async_map_process.push_back(std::shared_ptr<std::future<int>>(
 			//     new std::future<int>));
@@ -159,7 +164,7 @@ namespace stack_grid_bugcar
 		{
 			r_.reset();
 
-			baseOperation(stack, publish_stack, MAX_TEMP, stack_policy, inflation_enable, true, true);
+			baseOperation(stack, publish_stack, temp_policy, stack_policy, inflation_enable, true, true);
 
 			r_.sleep();
 
@@ -169,7 +174,7 @@ namespace stack_grid_bugcar
 
 	void StackGridBase::run_withTimer(const ros::TimerEvent &event)
 	{
-		baseOperation(stack, publish_stack, MAX_TEMP, stack_policy, inflation_enable, true, true);
+		baseOperation(stack, publish_stack, temp_policy, stack_policy, inflation_enable, true, true);
 	}
 
 	void StackGridBase::baseOperation(cv::Mat &main_stack, cv::Mat &output_stack, int temp_policy, int stack_policy, bool inflation_enable, bool timing, bool publish_enable)
@@ -180,7 +185,7 @@ namespace stack_grid_bugcar
 
 		main_stack.convertTo(threshold_stack, threshold_stack.type());
 
-		thresholdStack(threshold_stack, threshold_occupancy);
+		thresholdStack(threshold_stack, threshold_occupancy, keep_danger);
 
 		if (inflation_enable)
 			inflateLayer(threshold_stack, gaussian_kernel, dilation_kernel);
@@ -313,7 +318,7 @@ namespace stack_grid_bugcar
 		cv::Mat input_temp;
 		temp_stack.convertTo(input_temp, temp_stack.type());
 
-		if (policy == MAX_TEMP)
+		if (policy <= WEIGHTED_TEMP)
 		{
 			for (int i = 0; i < static_layers_handler.size(); ++i)
 			{
@@ -349,7 +354,14 @@ namespace stack_grid_bugcar
 
 						static_layers_handler[i]->get_transformed_input(input_temp);
 						// imshowOccupancyGrid("input", input_temp);
-						cv::max(temp_stack, input_temp, temp_stack);
+						if(policy == MAX_TEMP)
+						{
+							cv::max(temp_stack, input_temp, temp_stack);
+						}
+						if(policy == WEIGHTED_TEMP)
+						{
+							cv::addWeighted(temp_stack, 1.0, input_temp, static_layers_handler[i]->get_weight(), 0, temp_stack);
+						}
 					}
 				}
 				else
@@ -368,6 +380,10 @@ namespace stack_grid_bugcar
 
 		input_stack.setTo(1, threshold_mask);
 		input_stack.setTo(0, input_stack < 1);
+		input_stack.setTo(101, input_stack > threshold_occupancy + 1);
+	}
+	void StackGridBase::thresholdStack(cv::Mat &input_stack, float threshold_value, bool keep_danger)
+	{
 		input_stack.setTo(101, input_stack > threshold_occupancy + 1);
 	}
 

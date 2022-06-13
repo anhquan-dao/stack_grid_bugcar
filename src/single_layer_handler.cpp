@@ -17,6 +17,13 @@ namespace stack_grid_bugcar
         }
         ROS_INFO_STREAM("Created simple " + msg_type + " handler of type stack_grid_bugcar::LayerHandler for " + obj_name + ": " + sub_topic);
     }
+    LayerHandler::LayerHandler(std::string parent_node, std::string src_name, std::string global_frame, std::string msg_type, std::string topic, double _weight) : 
+    LayerHandler(parent_node, src_name, global_frame, msg_type, topic)
+    {
+        weight = _weight;
+        ROS_INFO_STREAM("Assign weight " << weight << " to " + obj_name + " layer");
+    }
+
     std::string LayerHandler::get_frame_id()
     {
         return layer_origin.header.frame_id;
@@ -59,8 +66,8 @@ namespace stack_grid_bugcar
         // }
         if (abs(last_callback_time.toSec() - ros::Time::now().toSec()) > 2)
         {
-            // ROS_WARN_STREAM("Input for " + obj_name + " has not been updated for " <<
-            //          abs(last_callback_time.toSec() - ros::Time::now().toSec()) << ", topic: " + sub_topic);
+            ROS_WARN_STREAM("Input for " + obj_name + " has not been updated for " <<
+                     abs(last_callback_time.toSec() - ros::Time::now().toSec()) << ", topic: " + sub_topic);
             return StackGridBase::err_code::LAYER_LATE_UPDATE;
         }
 
@@ -173,6 +180,7 @@ namespace stack_grid_bugcar
 
         raw_data_buffer = cv::Mat(input_data->data, true).reshape(1, input_data->info.height);
         raw_data_buffer += 1;
+        // raw_data_buffer *= weight;
         // ROS_INFO_STREAM("raw_data_buffer: " << raw_data_buffer.type() << " " << &raw_data_buffer);
 
         // ROS_INFO_STREAM(data_img.type());

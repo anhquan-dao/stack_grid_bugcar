@@ -138,7 +138,7 @@ void StackGrid::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, int m
 
     resetMaps();
 
-    baseOperation(stack, publish_stack, MAX_TEMP, stack_policy, inflation_enable, true, true);
+    baseOperation(stack, publish_stack, temp_policy, stack_policy, inflation_enable, true, true);
     
 
     if(!publish_stack.isContinuous()){

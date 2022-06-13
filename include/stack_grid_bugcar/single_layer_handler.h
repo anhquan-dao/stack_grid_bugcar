@@ -28,10 +28,15 @@ class LayerHandler{
 
         }    
         LayerHandler(std::string parent_node, std::string src_name, std::string global_frame, std::string msg_type, std::string topic);
+        LayerHandler(std::string parent_node, std::string src_name, std::string global_frame, std::string msg_type, std::string topic, double _weight);
         cv::Mat getLayerIMG();
         std::string get_frame_id();
         std::string get_name();
         std::string get_sub_topic();
+        double get_weight()
+        {
+            return weight;
+        }
 
         void update_stack_size(int size_x, int size_y);
         void update_stack_resolution(double resolution_);
@@ -62,6 +67,7 @@ class LayerHandler{
 
         double layer_resolution;
         double stack_resolution;
+        double weight;
         cv::Size stack_dim = cv::Size(0,0);
 
         geometry_msgs::PoseStamped layer_origin;

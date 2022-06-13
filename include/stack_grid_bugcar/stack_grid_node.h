@@ -31,6 +31,7 @@ namespace stack_grid_bugcar
 
     /** Temporal stack maximum policy */
     static const int MAX_TEMP = 0;
+    static const int WEIGHTED_TEMP = 1;
 
     /** Main mapping/stacking policy */
     static const int NO_MAP = -1;
@@ -102,6 +103,7 @@ namespace stack_grid_bugcar
         void getTemporalStack(int policy);
 
         void thresholdStack(cv::Mat &stack, float threshold_value);
+        void thresholdStack(cv::Mat &stack, float threshold_value, bool keep_danger);
 
         /**
          * @brief Inflate map to create danger zone
@@ -194,6 +196,8 @@ namespace stack_grid_bugcar
         int height;
         double resolution; // Unit: meter/pixel
         int stack_policy;
+        int temp_policy;
+        bool keep_danger;
 
         bool track_unknown_;
         int default_value;

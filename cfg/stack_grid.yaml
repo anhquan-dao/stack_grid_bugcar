@@ -10,13 +10,15 @@ stack_grid:
   track_unknown: true
   threshold_occupancy: 50
   stack_policy: -1
-  inflation_enable: false
+  temp_policy: 1
+  keep_danger: true
+  inflation_enable: true
   inflation_radius: 1
   inscribed_radius: 0.5
-  static_sources: input1 input2 input3 input4 input5 fake
-  input1: {msg_type: OccupancyGrid, topic: /map/image_segmentation}
-  input2: {msg_type: OccupancyGrid, topic: /map/scan}
-  input3: {msg_type: OccupancyGrid, topic: /map/rear_road_curb}
-  input4: {msg_type: OccupancyGrid, topic: /map/front_road_curb}
-  input5: {msg_type: OccupancyGrid, topic: /map/realsense_lidar}
+  static_sources: input1 input2 input3 input4 input5
+  input1: {msg_type: OccupancyGrid, topic: /map/image_segmentation, weight: 0.4}
+  input2: {msg_type: OccupancyGrid, topic: /map/scan, weight: 0.1}
+  input3: {msg_type: OccupancyGrid, topic: /map/rear_road_curb, weight: 0.1}
+  input4: {msg_type: OccupancyGrid, topic: /map/front_road_curb, weight: 0.1}
+  input5: {msg_type: OccupancyGrid, topic: /map/realsense_lidar, weight: 0.1}
   # fake: {msg_type: OccupancyGrid, topic: /map/abc}
