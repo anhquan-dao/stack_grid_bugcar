@@ -139,6 +139,12 @@ namespace stack_grid_bugcar
 		temp_stack = cv::Mat(cv::Size(size_x, size_y), CV_32FC1);
 		temp_stack = 0;
 
+		weight_stack = cv::Mat(cv::Size(size_x, size_y), CV_32FC1);
+		weight_stack = 0;
+
+		temp_weight_stack = cv::Mat(cv::Size(size_x, size_y), CV_32FC1);
+		temp_weight_stack = 0;
+
 		publish_stack = cv::Mat(cv::Size(size_x, size_y), CV_8SC1, -1);
 		threshold_stack = cv::Mat(stack);
 
@@ -312,7 +318,13 @@ namespace stack_grid_bugcar
 		{
 			temp_stack = cv::Mat(cv::Size(size_x, size_y), temp_stack.type(), 0);
 		}
+		if (weight_stack.size() != cv::Size(size_x, size_y))
+		{
+			weight_stack = cv::Mat(cv::Size(size_x, size_y), weight_stack.type(), 0);
+		}
 		temp_stack = 0;
+		weight_stack = 0;
+		
 
 		geometry_msgs::TransformStamped geo_transform;
 		cv::Mat input_temp;
@@ -359,8 +371,14 @@ namespace stack_grid_bugcar
 							cv::max(temp_stack, input_temp, temp_stack);
 						}
 						if(policy == WEIGHTED_TEMP)
-						{
+						{	
+							double layer_weight = static_layers_handler[i]->get_weight();
+							temp_weight_stack = 0;
+							temp_weight_stack.setTo(100*layer_weight, input_temp >= 1);
+							weight_stack += temp_weight_stack;
+
 							cv::addWeighted(temp_stack, 1.0, input_temp, static_layers_handler[i]->get_weight(), 0, temp_stack);
+							// temp_stack.setTo(101, temp_stack > 101);
 						}
 					}
 				}
@@ -370,6 +388,12 @@ namespace stack_grid_bugcar
 				std::lock_guard<std::mutex> lg(data_mutex);
 				layer_diagnostics[static_layers_handler[i]->get_name()] = err_code;
 			}
+			if(policy == WEIGHTED_TEMP)
+			{
+				temp_stack /= weight_stack;
+				temp_stack *= 100;
+			}
+			
 		}
 		// imshowOccupancyGrid("fadsfas",input_temp);
 	}
@@ -383,7 +407,14 @@ namespace stack_grid_bugcar
 		input_stack.setTo(101, input_stack > threshold_occupancy + 1);
 	}
 	void StackGridBase::thresholdStack(cv::Mat &input_stack, float threshold_value, bool keep_danger)
-	{
+	{	
+		if(!keep_danger)
+		{
+			cv::inRange(input_stack, 1, threshold_value, threshold_mask);
+
+			input_stack.setTo(1, threshold_mask);
+			input_stack.setTo(0, input_stack < 1);
+		}
 		input_stack.setTo(101, input_stack > threshold_occupancy + 1);
 	}
 

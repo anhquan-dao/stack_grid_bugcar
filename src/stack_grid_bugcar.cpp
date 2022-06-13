@@ -34,6 +34,8 @@ void StackGrid::onInitialize(){
     
     nh.param("threshold_occupancy", threshold_occupancy, 50);
     nh.param("stack_policy", stack_policy, NO_MAP);
+    nh.param("temp_policy", temp_policy, WEIGHTED_TEMP);
+    nh.param("keep_danger", keep_danger, false);
 
     std::string source_strings;
     nh.getParam("static_sources", source_strings); 
@@ -62,14 +64,15 @@ void StackGrid::onInitialize(){
         ros::NodeHandle source_node(nh, source);
 
         std::string msg_type, topic;
-        bool enable_publish;
+        double weight;
+
         source_node.getParam("msg_type", msg_type);
         source_node.getParam("topic", topic);
-        source_node.param("enable_publish", enable_publish, false);
+        weight = source_node.param("weight", 1.0);
+
         static_layers_handler.push_back(std::shared_ptr<LayerHandler>(
-            new LayerHandler(nh.getNamespace(), source, 
-                            global_frame_, msg_type, topic)
-        ));
+				new LayerHandler(private_nh->getNamespace(), source,
+								 global_frame_, msg_type, topic, weight)));
 
         // async_map_process.push_back(std::shared_ptr<std::future<int>>(
         //     new std::future<int>));

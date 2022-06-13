@@ -164,6 +164,9 @@ namespace stack_grid_bugcar
         ///@{
         /** Temporal stack to hold input layers for later operation */
         cv::Mat temp_stack;
+        /** Total weight stack */
+        cv::Mat weight_stack;
+        cv::Mat temp_weight_stack;
         /** Mask for thresholding main stack */
         cv::Mat threshold_mask;
         /** Used for publishing */
