@@ -8,17 +8,42 @@ stack_grid:
   update_frequency: 10
 
   track_unknown: true
-  threshold_occupancy: 50
-  stack_policy: -1
-  temp_policy: 1
-  keep_danger: true
+  threshold_occupancy: 35 # From 0 to 100
   inflation_enable: true
-  inflation_radius: 1
-  inscribed_radius: 0.5
-  static_sources: input1 input2 input3 input4 input5
-  input1: {msg_type: OccupancyGrid, topic: /map/image_segmentation, weight: 0.4}
-  input2: {msg_type: OccupancyGrid, topic: /map/scan, weight: 0.1}
-  input3: {msg_type: OccupancyGrid, topic: /map/rear_road_curb, weight: 0.1}
-  input4: {msg_type: OccupancyGrid, topic: /map/front_road_curb, weight: 0.1}
-  input5: {msg_type: OccupancyGrid, topic: /map/realsense_lidar, weight: 0.1}
-  # fake: {msg_type: OccupancyGrid, topic: /map/abc}
+  inflation_radius: 1.0
+  inflate_y_only: true
+  convert_inflate_to_occupancy: true
+
+  update_frequency: 30.0
+  stack_policy: -1
+
+  # # Original params
+  # temp_policy: 0
+  # keep_danger: false
+
+  # Test
+  temp_policy: 1
+  keep_danger: false
+  # static_sources: road_curb road_curb_rear lidar_360 
+  static_sources: image_segmentation_front image_segmentation_rear image_segmentation_right image_segmentation_left road_curb road_curb_rear lidar_360
+  # static_sources: image_segmentation_front image_segmentation_rear road_curb road_curb_rear lidar_360
+  # static_sources: image_segmentation_front image_segmentation_rear road_curb road_curb_rear lidar_360
+  # static_sources:    lidar_360 image_segmentation_front image_segmentation_rear image_segmentation_right image_segmentation_left
+  # count_map: {msg_type: OccupancyGrid, topic: /stack_grid/map, enable_publish: false}
+
+
+  # for 4 side image segmentation
+  image_segmentation_front: {msg_type: OccupancyGrid, topic: /front, weight: 0.2}
+  image_segmentation_rear: {msg_type: OccupancyGrid, topic: /rear, weight: 0.2}
+  image_segmentation_left: {msg_type: OccupancyGrid, topic: /left,  weight: 0.1}
+  image_segmentation_right: {msg_type: OccupancyGrid, topic: /right, weight: 0.1}
+  
+
+  # for road curb occupancy grid
+  road_curb: {msg_type: OccupancyGrid, topic: /map/front_road_curb,  weight: 0.6}
+  road_curb_rear: {msg_type: OccupancyGrid, topic: /map/rear_road_curb,  weight: 0.6}
+  
+  # for lidar 360
+  # high_lidar: {msg_type: OccupancyGrid, topic: /depth_front, enable_publish: false}
+  # lidar_360: {msg_type: OccupancyGrid, topic: /map/scan, enable_publish: false}
+  lidar_360: {msg_type: OccupancyGrid, topic: /map/lidarOccupancyGrid,  weight: 0.2}
