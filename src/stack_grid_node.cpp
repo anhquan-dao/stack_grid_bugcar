@@ -157,10 +157,11 @@ namespace stack_grid_bugcar
 
 		int dilate_radius_cells = inscribed_rad/ resolution;
 		dilation_kernel = cv::getStructuringElement(cv::MORPH_ELLIPSE,
-															cv::Size(dilate_radius_cells * 2 + 1, dilate_radius_cells * 2 + 1),
-															cv::Point(-1, -1));
+													cv::Size(dilate_radius_cells * 2 + 1, dilate_radius_cells * 2 + 1),
+													cv::Point(-1, -1));
 
 		gaussian_kernel = cv::getGaussianKernel((inflation_rad / resolution) * 2 + 1, 0.0, CV_32FC1);
+		ROS_ERROR_STREAM(gaussian_kernel);
 
 		if(!inflate_y_only)
 		{	
@@ -169,37 +170,23 @@ namespace stack_grid_bugcar
 		}
 		else
 		{
-			ROS_ERROR_STREAM(__func__ << " " << __LINE__);
-			cv::Mat mat = cv::Mat(gaussian_kernel.cols, gaussian_kernel.rows, CV_32FC1);
-			mat.at<float>(0, (mat.cols - 1)/2) = 1.0;
-			ROS_ERROR_STREAM(__func__ << " " << __LINE__);
-			ROS_ERROR_STREAM(gaussian_kernel.rows << " " << gaussian_kernel.cols);
-			ROS_ERROR_STREAM(mat.rows << " " << mat.cols);
+			cv::Mat mat = cv::Mat(gaussian_kernel.cols, gaussian_kernel.rows, CV_32FC1, 0.0);
+			mat.at<float>(0, (mat.cols - 1)/2) = 1.0;			
 
 			gaussian_kernel = gaussian_kernel * mat;
 			gaussian_kernel = gaussian_kernel.t();
+			for(int i=0; i < (gaussian_kernel.cols-1)/2; i++)
+			{
+				gaussian_kernel.at<float>((gaussian_kernel.cols-1)/2, i) = 0;
+			}
+			
 		}
 
 		if(convert_inflate_to_occupancy)
 		{	
-			ROS_ERROR_STREAM(__func__ << " " << __LINE__);
-			int dilate_radius_cells = (inscribed_rad + inflation_rad)/ resolution;
-			if(!inflate_y_only)
-			{	
-				dilation_kernel = cv::Mat(dilate_radius_cells * 2 + 1, 1, CV_8U, 1);
-				cv::Mat mat = cv::Mat(dilation_kernel.cols, dilation_kernel.rows, CV_32FC1);
-				mat.at<float>(0, (mat.cols - 1)/2) = 1.0;
-				dilation_kernel *= mat;
-			}
-			else
-			{
-				dilation_kernel = cv::getStructuringElement(cv::MORPH_ELLIPSE,
-															cv::Size(dilate_radius_cells * 2 + 1, dilate_radius_cells * 2 + 1),
-															cv::Point(-1, -1));
-			}
+			gaussian_kernel.setTo(1.0, gaussian_kernel > 0.001);
+			gaussian_kernel.convertTo(gaussian_kernel, CV_8U);
 		}
-		
-		
 	}
 
 	void StackGridBase::run()
@@ -414,14 +401,13 @@ namespace stack_grid_bugcar
 						{	
 							double layer_weight = static_layers_handler[i]->get_weight();
 							temp_weight_stack = 0;
-							temp_weight_stack.setTo(100*layer_weight, input_temp >= 1);
+							temp_weight_stack.setTo(101*layer_weight, input_temp >= 1);
 							weight_stack += temp_weight_stack;
 							// ROS_INFO_STREAM("Weight of " << static_layers_handler[i]->get_name() << " : " << layer_weight);
 							// imshowOccupancyGrid(static_layers_handler[i]->get_name(), temp_weight_stack);
 							
 							
 							cv::addWeighted(temp_stack, 1.0, input_temp, static_layers_handler[i]->get_weight(), 0, temp_stack);
-							temp_stack.setTo(1, temp_stack < 2);
 							// temp_stack.setTo(101, temp_stack > 101);
 						}
 					}
@@ -490,6 +476,10 @@ namespace stack_grid_bugcar
 		if(!convert_inflate_to_occupancy)
 		{
 			cv::filter2D(obstacle_mask, obstacle_mask, -1.0, gaussian_kernel, cv::Point(-1, -1));
+		}
+		else
+		{
+			cv::dilate(obstacle_mask, obstacle_mask, gaussian_kernel);
 		}
 		// main_stack.setTo(-1, main_stack < 0);
 
