@@ -86,7 +86,8 @@ namespace stack_grid_bugcar
 		private_nh->getParam("inflation_radius", inflation_rad);
 		private_nh->param("inscribed_radius", inscribed_rad);
 		private_nh->param("track_unknown", track_unknown_, true);
-		private_nh->param("inflate_y_only", inflate_y_only, false);
+		private_nh->param("inflate_x_only", inflate_x_only, false);
+		private_nh->param("inflate_ahead_only", inflate_ahead_only, false);
 		private_nh->param("convert_inflate_to_occupancy", convert_inflate_to_occupancy, false);
 
 		if (track_unknown_)
@@ -161,11 +162,9 @@ namespace stack_grid_bugcar
 													cv::Point(-1, -1));
 
 		gaussian_kernel = cv::getGaussianKernel((inflation_rad / resolution) * 2 + 1, 0.0, CV_32FC1);
-		ROS_ERROR_STREAM(gaussian_kernel);
 
-		if(!inflate_y_only)
+		if(!inflate_x_only)
 		{	
-			ROS_ERROR_STREAM(__func__ << " " << __LINE__);
 			gaussian_kernel = gaussian_kernel * gaussian_kernel.t();	
 		}
 		else
@@ -473,13 +472,29 @@ namespace stack_grid_bugcar
 		// ROS_INFO_STREAM("Applying Gaussian blur");
 
 		// imshowOccupancyGrid("obstacle_mask", obstacle_mask);
+		cv::Rect upper_region(obstacle_mask.cols/2, 0, obstacle_mask.cols/2, obstacle_mask.rows);
+		cv::Rect lower_region(0, 0, obstacle_mask.cols/2, obstacle_mask.rows);
+		cv::Mat flipped_gaussian;
+		cv::flip(gaussian_kernel, flipped_gaussian, 1);
+		
+
+
 		if(!convert_inflate_to_occupancy)
-		{
-			cv::filter2D(obstacle_mask, obstacle_mask, -1.0, gaussian_kernel, cv::Point(-1, -1));
-		}
+		{	
+			if(!inflate_ahead_only)
+			{
+				cv::filter2D(obstacle_mask(lower_region), obstacle_mask(lower_region), -1.0, flipped_gaussian, cv::Point(-1, -1));
+			}
+
+			cv::filter2D(obstacle_mask(upper_region), obstacle_mask(upper_region), -1.0, gaussian_kernel, cv::Point(-1, -1));		}
 		else
 		{
-			cv::dilate(obstacle_mask, obstacle_mask, gaussian_kernel);
+			if(!inflate_ahead_only)
+			{
+				cv::dilate(obstacle_mask(lower_region), obstacle_mask(lower_region), flipped_gaussian);
+			}
+			
+			cv::dilate(obstacle_mask(upper_region), obstacle_mask(upper_region), gaussian_kernel);
 		}
 		// main_stack.setTo(-1, main_stack < 0);
 

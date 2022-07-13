@@ -11,9 +11,8 @@ stack_grid:
   threshold_occupancy: 35 # From 0 to 100
   inflation_enable: true
   inflation_radius: 3.0
-  inflate_y_only: false
-  convert_inflate_to_occupancy: false
-
+  inflate_x_only: true
+  inflate_ahead_only: false
   update_frequency: 30.0
   stack_policy: -1
 
@@ -25,12 +24,12 @@ stack_grid:
   temp_policy: 1
   keep_danger: false
   # static_sources: road_curb road_curb_rear lidar_360 
-  # static_sources: image_segmentation_front image_segmentation_rear image_segmentation_right image_segmentation_left road_curb road_curb_rear lidar_360
+  static_sources: image_segmentation_front image_segmentation_rear image_segmentation_right image_segmentation_left road_curb road_curb_rear lidar_360
   # static_sources: image_segmentation_front image_segmentation_rear road_curb road_curb_rear lidar_360
   # static_sources: image_segmentation_front image_segmentation_rear road_curb road_curb_rear lidar_360
   # static_sources:    lidar_360 image_segmentation_front image_segmentation_rear image_segmentation_right image_segmentation_left
   # count_map: {msg_type: OccupancyGrid, topic: /stack_grid/map, enable_publish: false}
-  static_sources: fdaf
+  # static_sources: fdaf
 
   # for 4 side image segmentation
   image_segmentation_front: {msg_type: OccupancyGrid, topic: /front, weight: 0.2}

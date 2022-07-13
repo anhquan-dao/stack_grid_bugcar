@@ -177,7 +177,8 @@ namespace stack_grid_bugcar
         double inflation_rad;
         double inscribed_rad;
         
-        bool inflate_y_only;
+        bool inflate_x_only;
+        bool inflate_ahead_only;
         bool convert_inflate_to_occupancy;
         cv::Mat gaussian_kernel;
         cv::Mat dilation_kernel;

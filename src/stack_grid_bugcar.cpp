@@ -42,6 +42,13 @@ void StackGrid::onInitialize(){
     nh.getParam("inflation_enable", inflation_enable);
     nh.getParam("inflation_radius", inflation_rad);
     nh.param("inscribed_radius", inscribed_rad);
+    nh.getParam("inflation_enable", inflation_enable);
+    nh.getParam("inflation_radius", inflation_rad);
+    nh.param("inscribed_radius", inscribed_rad);
+    nh.param("track_unknown", track_unknown_, true);
+    nh.param("inflate_x_only", inflate_x_only, false);
+    nh.param("inflate_ahead_only", inflate_ahead_only, false);
+    nh.param("convert_inflate_to_occupancy", convert_inflate_to_occupancy, false);
     nh.param("track_unknown", track_unknown_, true);
 
     if(track_unknown_){
